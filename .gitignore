@@ -1,0 +1,12 @@
+.scratch/
+.venv/
+.venv-uv/
+__pycache__/
+*.pyc
+runs/
+runs-*/
+
+.fresh-user/
+/build/
+/dist/
+*.egg-info/

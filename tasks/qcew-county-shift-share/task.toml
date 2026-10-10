@@ -1,0 +1,9 @@
+id = "qcew-county-shift-share"
+title = "Reconcile county employment shift-share against BLS totals"
+category = "data"
+source = "https://www.bls.gov/cew/downloadable-data-files.htm"
+licence = "public domain (US government work)"
+created = "2026-10-10"
+prompt = "prompt.md"
+check_timeout = 120
+check = ["python3", "-I", "tests_hidden/check.py"]

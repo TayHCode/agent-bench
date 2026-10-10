@@ -1,0 +1,13 @@
+source_repo = "python/mypy"
+base_commit = "0967b8a894b13847e3b10add3f77b44ea9fa69fd"
+fix_commit = "09f2ca6311750a36df903f21c7b4a5b22dffcb32"
+exclude = [".github", "mypyc", "misc", "skills"]
+gold_paths = ["mypy/semanal.py", "test-data/unit/check-python312.test", "test-data/unit/check-typevar-tuple.test"]
+
+[[hidden_files]]
+from = "test-data/unit/check-python312.test"
+to = "check-python312.test"
+
+[[hidden_files]]
+from = "test-data/unit/check-typevar-tuple.test"
+to = "check-typevar-tuple.test"

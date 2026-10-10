@@ -1,0 +1,42 @@
+# Public list prices, USD per million tokens. Dated; update with a new version string.
+# Sources: vendor pricing pages, checked 2026-10-09.
+# cache_write for Claude is the 1-hour tier (2x input), which is what Claude Code used in M0.
+# Anthropic 5-minute write (1.25x input) is cache_write_5m. OpenAI has no separate write charge.
+version = "2026-10-09"
+
+[models."claude-haiku-5-5"]
+input = 0.10
+cache_write = 0.20
+cache_write_5m = 0.125
+cache_read = 0.01
+output = 0.50
+long_context_over = 100000
+long_context_multiplier = 5
+
+[models."claude-sonnet-5-5"]
+input = 2.0
+cache_write = 4.0
+cache_write_5m = 2.5
+cache_read = 0.20  # corrected 2026-10-10 (was 0.10): the historical vendor list price was 0.20
+output = 10.0
+
+[models."claude-opus-5-5"]
+input = 4.0
+cache_write = 8.0
+cache_write_5m = 5.0
+cache_read = 0.20
+output = 20.0
+
+[models."gpt-6-astra"]
+input = 10.0
+cache_write = 10.0
+cache_write_5m = 10.0
+cache_read = 1.0
+output = 50.0
+
+[models."gpt-6.1-sol"]
+input = 2.0
+cache_write = 2.0
+cache_write_5m = 2.0
+cache_read = 0.10
+output = 10.0

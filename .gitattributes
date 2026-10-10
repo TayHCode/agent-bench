@@ -1,0 +1,3 @@
+# Retain the original IRS line endings; the reference builder reads CRLF records.
+tasks/irs-donee-matching/**/*.txt -text whitespace=cr-at-eol
+tasks/irs-donee-matching/repo/eo_*.csv -text whitespace=cr-at-eol

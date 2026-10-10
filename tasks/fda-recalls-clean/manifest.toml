@@ -1,0 +1,31 @@
+# Source manifest for fda-recalls-clean
+id = "fda-recalls-clean"
+source_url = "https://api.fda.gov/food/enforcement.json?search=report_date:[20260701+TO+20261008]&limit=1000"
+source_repo = "openFDA food enforcement API"
+language = "CSV / any"
+licence = "CC0-1.0 (openFDA, https://open.fda.gov/license/)"
+licence_file = "LICENSE-SOURCE"
+base_commit = "n/a (fetched 2026-10-09; API meta last_updated 2026-09-30; 299 records)"
+fix_commit = "n/a (known answer produced by tasks/fda-recalls-clean/build_reference.py)"
+pr_created = "n/a"
+fix_merged = "n/a"
+fix_after_2026_06_30 = true
+fix_author = "n/a (government dataset; the cleaned file is derived by this benchmark, not written by any model)"
+ai_authorship_check = "Not applicable: no code fix; the known answer is produced by the benchmark build script."
+changes_to_start_checkout = "Selected 12 of the API fields and flattened them to CSV; record IDs and numerical values retained; entity labels overlapping private terms generalized consistently."
+hidden_check = "check.py compares recalls_clean.csv cell for cell with a known-answer CSV (quantity_number compared numerically)."
+why_it_matches_a_real_workflow = "Cleaning a vendor/government export before loading it into a tracker, with exact column rules: routine data-wrangling."
+
+[workflow_match]
+# Five descriptive questions document the task's workflow relevance.
+q1_done_in_a_normal_week = "Yes: normalising an export before import happens constantly."
+q2_real_artifact_not_invented = "Yes: real public records with real inconsistencies (N/A states and ZIPs, double spaces, free-text quantities, '(the)' country names)."
+q3_success_is_what_the_requester_would_check = "Yes: an importer would reject or mis-load anything but the specified columns, so exact match is the right check."
+q4_needs_the_usual_toolkit = "Yes: inspect data, write a small script or one-liner, produce a file."
+q5_no_private_data_and_no_leak_of_the_fix = "Yes: public-domain data, no private fields; the answer file is not in the start checkout."
+
+# Export preparation: unrelated upstream docs, media and build lockfiles omitted;
+# contact metadata generalised. Selected checks and upstream gold code retained.
+
+[distribution]
+mode = "bundled public-domain data with neutral aliases for entity labels overlapping private terms"

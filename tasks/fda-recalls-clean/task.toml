@@ -1,0 +1,10 @@
+id = "fda-recalls-clean"
+title = "Clean an openFDA food-recall export into a tracker-ready CSV"
+category = "data"
+source = "https://api.fda.gov/food/enforcement.json?search=report_date:[20260701+TO+20261008]&limit=1000"
+licence = "CC0-1.0"
+created = "2026-10-09"
+prompt = "prompt.md"
+check_timeout = 30
+# Run from the working copy after hidden/ is copied in as tests_hidden/.
+check = ["python3", "-I", "tests_hidden/check.py"]

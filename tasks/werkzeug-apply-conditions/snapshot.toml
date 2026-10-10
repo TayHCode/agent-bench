@@ -1,0 +1,21 @@
+source_repo = "pallets/werkzeug"
+base_commit = "671537e0e5c7dcec4ac61ffc755dbd8936cefcfb"
+fix_commit = "830d4b3957e9532be5f510e499dd797964d064d6"
+exclude = [".github"]
+gold_paths = ["CHANGES.rst", "docs/quickstart.rst", "src/werkzeug/datastructures/etag.py", "src/werkzeug/datastructures/range.py", "src/werkzeug/http.py", "src/werkzeug/middleware/shared_data.py", "src/werkzeug/sansio/http.py", "src/werkzeug/test.py", "src/werkzeug/utils.py", "src/werkzeug/wrappers/response.py", "tests/test_apply_conditions.py", "tests/test_apply_range.py", "tests/test_http.py", "tests/test_send_file.py", "tests/test_wrappers.py"]
+
+[[hidden_files]]
+from = "tests/test_apply_conditions.py"
+to = "test_apply_conditions.py"
+
+[[hidden_files]]
+from = "tests/test_apply_range.py"
+to = "test_apply_range.py"
+
+[[hidden_files]]
+from = "tests/test_wrappers.py"
+to = "test_wrappers.py"
+
+[[hidden_files]]
+from = "tests/test_http.py"
+to = "test_http.py"

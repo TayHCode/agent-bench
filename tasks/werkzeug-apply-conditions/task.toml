@@ -1,0 +1,10 @@
+id = "werkzeug-apply-conditions"
+title = "Rework make_conditional into correct RFC 9110 precondition and range handling"
+category = "feature"
+source = "https://github.com/pallets/werkzeug/pull/3308"
+licence = "BSD-3-Clause"
+created = "2026-10-10"
+prompt = "prompt.md"
+check_timeout = 120
+# Run from the working copy after hidden/ is copied in as tests_hidden/ (upstream tests at the fix commit).
+check = ["bash", "tests_hidden/check.sh"]

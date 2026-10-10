@@ -1,0 +1,13 @@
+Source: U.S. Food and Drug Administration, openFDA food enforcement reports
+        https://api.fda.gov/food/enforcement.json  (records with report_date 2026-07-01 to 2026-10-08,
+        fetched 2026-10-09; the API meta reported last_updated 2026-09-30)
+
+Licence: unless otherwise noted, openFDA content and data are public domain and made available under
+the Creative Commons CC0 1.0 Universal dedication (https://open.fda.gov/license/,
+https://creativecommons.org/publicdomain/zero/1.0/). Terms: https://open.fda.gov/terms/
+
+Disclaimer carried from openFDA: do not rely on openFDA to make decisions regarding medical care;
+the data are unvalidated. This benchmark uses the records only as text to be reformatted.
+
+Derived files in this task folder (repo/recalls_raw.csv, gold/ and hidden/ known-answer CSVs) are
+selections and reformattings of those records and are offered under the same CC0 terms.

@@ -1,0 +1,40 @@
+{
+ "taskiq/abc/broker.py": [
+  "Middleware % is not an instance of TaskiqMiddleware. Skipping...",
+  "Middleware % is not an instance of TaskiqMiddleware. Skipping..."
+ ],
+ "taskiq/cli/utils.py": [
+  "Inserting % in sys.path",
+  "Importing tasks from module %",
+  "Cannot import %. Cause:",
+  "Cannot remove '%' from sys.path"
+ ],
+ "taskiq/cli/watcher.py": [
+  "File changed. Event: %",
+  "Cannot check path `%` in gitignore. Cause: %"
+ ],
+ "taskiq/cli/worker/process_manager.py": [
+  "Process % restarted with pid %",
+  "Got signal %.",
+  "Process % is already terminated.",
+  "Watching directory: %",
+  "Got event: %",
+  "% is dead. Scheduling reload."
+ ],
+ "taskiq/cli/worker/run.py": [
+  "Got signal %."
+ ],
+ "taskiq/kicker.py": [
+  "Kicking % with args=% and kwargs=%."
+ ],
+ "taskiq/middlewares/prometheus_middleware.py": [
+  "Setting up multiproc dir to %"
+ ],
+ "taskiq/receiver/receiver.py": [
+  "Received message: %",
+  "Waiting for % running tasks to complete..."
+ ],
+ "taskiq/schedule_sources/label_based.py": [
+  "Broker for % `%` doesn't match scheduler's broker `%`"
+ ]
+}

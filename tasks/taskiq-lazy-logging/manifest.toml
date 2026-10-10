@@ -1,0 +1,34 @@
+# Source manifest for taskiq-lazy-logging
+id = "taskiq-lazy-logging"
+source_url = "https://github.com/taskiq-python/taskiq/pull/665"
+source_repo = "taskiq-python/taskiq"
+language = "Python"
+licence = "MIT"
+licence_file = "LICENSE-SOURCE"
+base_commit = "9ce2069a49fcf20e9348ac214bd5a8056382dd15"
+fix_commit = "9fa2a1cb915c77e87a10320cce034ec8ba8a3499"
+pr_created = "2026-08-28"
+fix_merged = "2026-08-29"
+fix_after_2026_06_30 = true
+fix_author = "human contributor (see source PR)"
+ai_authorship_check = "Checked PR author, all commit author/trailer text, PR body and labels for Claude, Codex, Anthropic, OpenAI, ChatGPT, Copilot, Gemini, Cursor, bot accounts and 'generated with' markers: none found. An undisclosed AI-written fix cannot be detected this way."
+changes_to_start_checkout = "Removed .github/ and imgs/; git tag v0.0.1 added on the single start commit so versioningit can build the package. Nothing else changed."
+hidden_check = "check.py: ruff 'G' rules clean, pyproject enables G, the 20 f-string log messages keep their text, and the pristine test-suite passes (313 tests)."
+why_it_matches_a_real_workflow = "Lint-driven clean-up across 11 files (20 f-string logging calls plus 3 other logging-format findings): a typical breadth chore."
+
+[workflow_match]
+# Five descriptive questions document the task's workflow relevance.
+q1_done_in_a_normal_week = "Yes: enabling a lint rule and fixing every finding across a package is routine."
+q2_real_artifact_not_invented = "Yes: real merged PR #665 (the rule, the 23 findings it caused, and the pyproject change)."
+q3_success_is_what_the_requester_would_check = "Yes: the requester would run ruff and the tests; the check does the same plus a message-wording guard."
+q4_needs_the_usual_toolkit = "Yes: grep/ruff, multi-file edits, run the test suite."
+q5_no_private_data_and_no_leak_of_the_fix = "Yes: public MIT repo; the real fix is not in the start checkout."
+
+[gold_comparison]
+# The upstream PR also reordered `None` inside type unions in these files (a style fix unrelated to logging).
+# The report leaves them out of the size comparison with the real fix.
+ignore = ["taskiq/abc/middleware.py", "taskiq/abc/schedule_source.py", "taskiq/acks.py"]
+
+
+[distribution]
+mode = "pinned public reconstruction recipe; source and gold fetched only on explicit prepare"

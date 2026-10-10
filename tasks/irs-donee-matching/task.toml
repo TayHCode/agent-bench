@@ -1,0 +1,10 @@
+id = "irs-donee-matching"
+title = "Match a name-only donee list to IRS records and revocation status"
+category = "data"
+source = "https://www.irs.gov/charities-non-profits/exempt-organizations-business-master-file-extract-eo-bmf"
+licence = "public domain (US government work)"
+created = "2026-10-10"
+prompt = "prompt.md"
+check_timeout = 30
+# Run from the working copy after hidden/ is copied in as tests_hidden/.
+check = ["python3", "-I", "tests_hidden/check.py"]

@@ -1,0 +1,33 @@
+# Source manifest for mypy-deferred-alias-crash
+id = "mypy-deferred-alias-crash"
+source_url = "https://github.com/python/mypy/pull/22096"
+source_repo = "python/mypy"
+language = "Python"
+licence = "MIT"
+licence_file = "LICENSE-SOURCE"
+base_commit = "0967b8a894b13847e3b10add3f77b44ea9fa69fd"
+fix_commit = "09f2ca6311750a36df903f21c7b4a5b22dffcb32"
+pr_created = "2026-10-04"
+fix_merged = "2026-10-05"
+fix_after_2026_06_30 = true
+fix_author = "mypy core developer (see source PR); fixes issue #21933 (opened 2026-09-03 by a user, with the crash report)"
+ai_authorship_check = "Checked PR author, the commit messages and the squash-merge text, PR body, comments and labels for Claude, Codex, Anthropic, OpenAI, ChatGPT, Copilot, Gemini, Cursor, bot accounts (only the upstream test-report bot appears) and 'generated with' markers: none found. Other mypy commits in the period do carry Claude/Codex trailers; this PR has none. An undisclosed AI-written fix cannot be detected this way."
+changes_to_start_checkout = "Upstream tree at the base commit with mypyc/, misc/, skills/ and .github/ removed (not needed to run mypy's own tests); no other change."
+hidden_check = "check.sh: upstream check-python312.test and check-typevar-tuple.test at the fix commit (each holds one new regression case for this crash) replace the working copy's, then seven data-driven suites run with pytest (python312, typevar-tuple, type-aliases, tuples, recursive-types, newsemanal, typeddict). Any fix that removes the crash and keeps those suites green passes; the check does not look at where the fix is."
+why_it_matches_a_real_workflow = "Debugging from a user's crash report: the traceback ends in tuple_fallback (NotImplementedError) but the root cause is earlier, in semantic analysis, when a type alias is deferred and its node is replaced instead of updated in place. This is the usual 'the stack trace points at the symptom' debugging job."
+log_provided_to_agent = "The reporter's full INTERNAL ERROR traceback and reproducer (issue #21933) plus a commenter's variant, in prompt.md. mypy's own CI had no failing run for this bug, so the 'failing CI run' form was not available; the user's crash log is the real log."
+
+[workflow_match]
+# Five descriptive questions document the task's workflow relevance.
+q1_done_in_a_normal_week = "Yes: triaging a crash report with a traceback and a repro file."
+q2_real_artifact_not_invented = "Yes: a real user report with the real traceback; the real merged fix."
+q3_success_is_what_the_requester_would_check = "Yes: the crash is gone on the repro, the new regression cases pass, the neighbouring suites stay green."
+q4_needs_the_usual_toolkit = "Yes: run the repro, read the traceback, trace backwards through a large codebase, run pytest through uv."
+q5_no_private_data_and_no_leak_of_the_fix = "Yes: public MIT repo; the fix and its regression cases are not in the start checkout."
+
+[gold_comparison]
+# gold/ holds the three files the PR changed, as of the fix commit.
+
+
+[distribution]
+mode = "pinned public reconstruction recipe; source and gold fetched only on explicit prepare"

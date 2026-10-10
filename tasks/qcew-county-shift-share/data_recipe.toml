@@ -1,0 +1,12 @@
+release_date = "2026-08-28"
+prepared_vintage = "2026-10-10"
+
+[[files]]
+name = "qcew-2025.zip"
+url = "https://data.bls.gov/cew/data/files/2025/csv/2025_qtrly_singlefile.zip"
+sha256 = "207db563cdd331055b55140786d8209da1e6ef5fbcfa61f039718db5e4f4afb2"
+
+[[files]]
+name = "qcew-2026.zip"
+url = "https://data.bls.gov/cew/data/files/2026/csv/2026_qtrly_singlefile.zip"
+sha256 = "27a5d0eeaca62c1823cb0cde06310fd8dd24524cf91d5ce5894e21cb7948fd96"

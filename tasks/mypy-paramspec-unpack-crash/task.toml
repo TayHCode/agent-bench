@@ -1,0 +1,10 @@
+id = "mypy-paramspec-unpack-crash"
+title = "Fix crash on non-normalized parameters expansion"
+category = "debug"
+source = "https://github.com/python/mypy/pull/22123"
+licence = "MIT"
+created = "2026-10-10"
+prompt = "prompt.md"
+check_timeout = 600
+check = ["bash", "tests_hidden/check.sh"]
+setup = ["bash", "-c", "uv run --no-project --python 3.13 --with-editable . --with attrs --with filelock --with lxml --with psutil --with pytest --with pytest-xdist --with setuptools --with tomli --with typing_extensions --with mypy_extensions --with pathspec --with librt --with \"ast-serialize>=0.12.1,<1.0\" python -c \"import mypy, pytest\""]

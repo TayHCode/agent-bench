@@ -1,0 +1,10 @@
+source_repo = "python-humanize/humanize"
+base_commit = "14965a74953eb5119859975e7c452a04b481cdae"
+fix_commit = "984526c02448110a8392dde3f5e26096dfd7c729"
+exclude = [".github"]
+gold_paths = ["src/humanize/number.py"]
+version_stub = true
+
+[[hidden_files]]
+from = "tests/test_number.py"
+to = "test_number_upstream.py"

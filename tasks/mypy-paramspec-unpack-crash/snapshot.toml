@@ -1,0 +1,9 @@
+source_repo = "python/mypy"
+base_commit = "8305c99691686338d266651a46572f5475d1c6d9"
+fix_commit = "6a6979c49a96d677396fe6df7301c903c7bcc01e"
+exclude = [".github", "mypyc", "misc", "skills"]
+gold_paths = ["mypy/expandtype.py", "mypy/types.py", "test-data/unit/check-python312.test"]
+
+[[hidden_files]]
+from = "test-data/unit/check-python312.test"
+to = "check-python312.test"

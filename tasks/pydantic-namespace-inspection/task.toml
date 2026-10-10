@@ -1,0 +1,10 @@
+id = "pydantic-namespace-inspection"
+title = "Refactor model namespace inspection"
+category = "feature"
+source = "https://github.com/pydantic/pydantic/pull/13596"
+licence = "MIT"
+created = "2026-10-10"
+prompt = "prompt.md"
+check_timeout = 600
+check = ["bash", "tests_hidden/check.sh"]
+setup = ["bash", "-c", "uv venv --python 3.14 .venv && uv pip install --no-sources --python .venv/bin/python ./pydantic-core && uv pip install --no-sources --python .venv/bin/python -e . pytest pytest-mock dirty-equals pytest-pretty pytest-examples hypothesis email-validator pytz cloudpickle jsonschema pytest-benchmark pytest-run-parallel"]

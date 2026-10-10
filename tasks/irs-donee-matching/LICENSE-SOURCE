@@ -1,0 +1,12 @@
+Source: U.S. Internal Revenue Service, Tax Exempt Organization Search bulk data
+        EO BMF extracts   https://www.irs.gov/pub/irs-soi/eo_ct.csv  (and eo_me, eo_nh, eo_ri, eo_vt)
+        Publication 78    https://apps.irs.gov/pub/epostcard/data-download-pub78.zip   (source of the donee list)
+        Auto-revocations  https://apps.irs.gov/pub/epostcard/data-download-revocation.zip
+        all downloaded 2026-10-10.
+
+Licence: works of the United States Government are not subject to copyright in the United States
+(17 U.S.C. 105) and are in the public domain. These files hold public records about tax-exempt
+organizations (names, business addresses, EINs, determination data); the benchmark kept them as
+published and removed no field. The revocation file was cut down to the rows for organizations in the
+BMF extracts, and the Pub 78 rows were cut down to New England and sampled to make the donee list,
+by task preparation (see manifest.toml). The Pub 78 cut-down is kept in build/.

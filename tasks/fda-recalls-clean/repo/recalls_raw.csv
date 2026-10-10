@@ -1,0 +1,300 @@
+recall_number,event_id,recalling_firm,city,state,postal_code,country,classification,status,recall_initiation_date,report_date,product_quantity
+H-1180-2026,99387,Green Jeeva LLC,Cerritos,CA,90703-2255,United States,Class I,Ongoing,20260708,20260729,"2,490 kg"
+H-1339-2026,99737,"Everything Sprouts, LLC",Minneapolis,MN,55406-1546,United States,Class I,Ongoing,20260822,20260923,201.56 pounds
+H-1305-2026,99646,Prince Bakery Inc,Bronx,NY,10458-6202,United States,Class III,Ongoing,20260813,20260909,150 units (total)
+H-1166-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,185 Cases
+H-1258-2026,99571,H & U Inc. dba Sun Noodle,Honolulu,HI,96819-3248,United States,Class I,Terminated,20260804,20260902,140 packages
+H-1219-2026,99325,La Colonia Foods Llc,Rockville,MD,20850-5223,United States,Class I,Ongoing,20260604,20260812,169 (16-oz) units
+H-1206-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1259-2026,99424,KHONG GUAN (HQ),Union City,CA,94587,United States,Class I,Ongoing,20260713,20260902,87 cases (36 units/case)
+H-1364-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,Tennessee: 256 units
+H-1192-2026,99458,"M.G. Foods, Inc.",Chpubliclabel5tte,NC,28273-4522,United States,Class I,Ongoing,20260718,20260812,498 burritos
+H-1379-2026,99594,NatureBest Pre-Cut & Produce LLc,Missouri City,TX,77489-1236,United States,Class I,Ongoing,20260805,20260923,"62,856 cases (total)"
+H-1213-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1395-2026,99874,"WFM Purchasing, LP",Austin,TX,78703-4644,United States,Class I,Ongoing,20260908,20260930,21 Wheels
+H-1179-2026,99355,Brooklyn Roasting Works LLC,Brooklyn,NY,11205-1010,United States,Class II,Terminated,20260702,20260729,1219 units
+H-1327-2026,99548,Ukrop's Homestyle Foods LLC,North Chesterfield,VA,23236-3956,United States,Class II,Ongoing,20260730,20260909,150/4lb units
+H-1191-2026,99081,"Galliker Dairy Co, Inc.",Altoona,PA,16602-2531,United States,Class II,Terminated,20260521,20260805,74 Cases
+H-1085-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1396-2026,99853,GIAS FOOD INC.,New York,NY,10017-7111,United States,Class I,Ongoing,20260903,20260930,"16,002 bags (2,286 cases)"
+H-1230-2026,99479,MIDWEST POULTRY SERVC C/O H & LELECTRIC,N Manchester,IN,46962,United States,Class I,Terminated,20260722,20260819,"1,589,577 dozen total"
+H-1387-2026,99815,Tiffany Food Corp,Brooklyn,NY,11207-3430,United States,Class III,Ongoing,20260828,20260923,38 cartons
+H-1187-2026,99386,"Man Fon, Inc.",San Gabriel,CA,91776-2528,United States,Class II,Terminated,20260708,20260729,300 lbs
+H-1222-2026,99425,"EXPORTB6, INC.",Lindon,UT,84042-1798,United States,Class I,Ongoing,20260719,20260812,"2,048 bottles"
+H-1393-2026,99859,"Kwok Shing, Inc.",San Francisco,CA,94124-3402,United States,Class III,Ongoing,20260908,20260930,70 boxes
+H-1249-2026,99640,"WFM Purchasing, LP",Austin,TX,78703-4644,United States,Class I,Ongoing,20260807,20260826,"12,995 units total"
+H-1234-2026,99434,"Prospector Popcorn, LLC",Ridgefield,CT,06877-6238,United States,Class III,Ongoing,20260715,20260826,"21,400 units (total)"
+H-1355-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Rhode Island: 6,264 units"
+H-1354-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Illinois: 1,056 units; Texas: 1,440 units"
+H-1278-2026,99629,"Byron White Formulas, Inc.",Santa Rosa,CA,95404-1740,United States,Class II,Ongoing,20260811,20260902,"10,403 units"
+H-1172-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,129 Cases
+H-1241-2026,99542,"Publix Super Markets, Inc.",Lakeland,FL,33811-3311,United States,Class I,Terminated,20260625,20260826,60320 units
+H-1293-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"1,575 cases"
+H-1378-2026,99594,NatureBest Pre-Cut & Produce LLc,Missouri City,TX,77489-1236,United States,Class I,Ongoing,20260805,20260923,"62,856 cases (total)"
+H-1252-2026,99640,"WFM Purchasing, LP",Austin,TX,78703-4644,United States,Class I,Ongoing,20260807,20260826,"12,995 units total"
+H-1152-2026,99074,Nutricia North America,White Plains,NY,10605-1490,United States,Class II,Ongoing,20260526,20260722,"1,363cs/12/12oz pouches + 16,298cs/24/12oz pouches"
+H-1080-2026,99147,Prime Food Processing LLC.,Brooklyn,NY,11211-1715,United States,Class I,Ongoing,20260602,20260701,69 cases
+H-1129-2026,99292,MARS SNACKING,Chicago,IL,60642-2404,United States,Class II,Completed,20260618,20260708,"21,114 cases"
+H-1205-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1160-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,216 Cases
+H-1214-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1114-2026,98864,"Utz Quality Foods, LLC",Hanover,PA,17331-1639,United States,Class I,Ongoing,20260428,20260701,300595 Bags
+H-1231-2026,99580,"Nutrient Foods, LLC",Reno,NV,89523-8909,United States,Class II,Completed,20260803,20260826,16 kits
+H-1133-2026,99082,"Boichik Bagels, Inc.",Berkeley,CA,94710-1401,United States,Class II,Ongoing,20260522,20260701,426 packages (6 bagels/package)
+H-1286-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"5,130 cases"
+H-1175-2026,99282,Fayus Inc.,Sacramento,CA,95828-1140,United States,Class II,Ongoing,20260619,20260722,120 cases (16 bags/case)
+H-1223-2026,99448,PT Organics Limited,Lake Oswego,OR,97034-3988,United States,Class II,Ongoing,20260713,20260812,"4,385 (4-oz units) of defective pouches from total lot produced"
+H-1351-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,Tennessee: 5 units; Texas: 360 units
+H-1136-2026,99275,Fry Pie ExportB LLC,Lancaster,OH,43130-4432,United States,Class II,Terminated,20260610,20260708,850 individual units
+H-1320-2026,99508,Wonton Specialists,Brooklyn,NY,11206,United States,Class III,Ongoing,20260728,20260909,500 bags
+H-1117-2026,98864,"Utz Quality Foods, LLC",Hanover,PA,17331-1639,United States,Class I,Ongoing,20260428,20260701,19200 Bags
+H-1297-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"1,779 cases"
+H-1138-2026,98988,Adams Extract & Spice LLC,Gonzales,TX,78629-8008,United States,Class I,Terminated,20260612,20260715,120 units
+H-1112-2026,98864,"Utz Quality Foods, LLC",Hanover,PA,17331-1639,United States,Class I,Ongoing,20260428,20260701,164640 Bags
+H-1143-2026,99327,Bear Stewart Co,Chicago,IL,60622-3637,United States,Class II,Terminated,20260624,20260715,313 cases
+H-1325-2026,99508,Wonton Specialists,Brooklyn,NY,11206,United States,Class III,Ongoing,20260728,20260909,700 bags
+H-1095-2026,99120,"Champion Foods, LLC",New Boston,MI,48164-9226,United States,Class II,Terminated,20260529,20260701,"997,821 retail units"
+H-1250-2026,99640,"WFM Purchasing, LP",Austin,TX,78703-4644,United States,Class I,Ongoing,20260807,20260826,"12,995 units total"
+H-1094-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1128-2026,99071,MOGO Moringa LLC,Saint Louis,MO,63146-5910,United States,Class I,Ongoing,20260524,20260708,"23,186 bottles"
+H-1265-2026,99716,Dreyer's Grand  Ice Cream Inc.,Laurel,MD,20723-1357,United States,Class II,Ongoing,20260818,20260902,685 pallets
+H-1331-2026,99684,EURO FOODS GROUP USA NJ INC,Totowa,NJ,07512-1406,United States,Class I,Ongoing,20260801,20260916,53 boxes
+H-1201-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,44 lbs (both 2 and 5-gallon buckets)
+H-1329-2026,99368,Fayus Inc.,Sacramento,CA,95828-1140,United States,Class I,Ongoing,20260706,20260909,Unknown
+H-1189-2026,99142,Nelson & Isa Lacteos LLC,Bay Shore,NY,11706-7408,United States,Class I,Ongoing,20260605,20260805,480 (1-lb clamshell packages)
+H-1188-2026,99386,"Man Fon, Inc.",San Gabriel,CA,91776-2528,United States,Class II,Terminated,20260708,20260729,40 lbs (4-lb size only)
+H-1342-2026,99780,Panorama Produce Sales Inc.,Mamaroneck,NY,10543-1661,United States,Class II,Ongoing,20260819,20260923,302 boxes
+H-1140-2026,98988,Adams Extract & Spice LLC,Gonzales,TX,78629-8008,United States,Class I,Terminated,20260612,20260715,81 units
+H-1391-2026,99717,United Sugar Producers and Refiners,Minneapolis,MN,55439-2597,United States,Class II,Ongoing,20260819,20260930,"12,678 CWT total"
+H-1100-2026,98281,Spring & Mulberry Inc.,Raleigh,NC,27606-6321,United States,Class I,Ongoing,20260109,20260701,"17,848 individual bars"
+H-1283-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"8,075 cases"
+H-1210-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1233-2026,99434,"Prospector Popcorn, LLC",Ridgefield,CT,06877-6238,United States,Class III,Ongoing,20260715,20260826,"21,400 units (total)"
+H-1245-2026,99663,"Gifford's Dairy, Inc.",Skowhegan,ME,04976-1436,United States,Class II,Ongoing,20260814,20260826,"3,585 units"
+H-1119-2026,98867,"George J Howe Company, Inc.",Grove City,PA,16127-1109,United States,Class I,Terminated,20260429,20260701,578.50 Cases
+H-1176-2026,99055,GELLERT GLOBAL GROUP,Elizabeth,NJ,07206,United States,Class II,Ongoing,20260515,20260722,"1,150 cases"
+H-1308-2026,99638,"WEIS MARKETS, INC.",Sunbury,PA,17801-3318,United States,Class II,Ongoing,20260806,20260909,"Pints : 360 , 1/2 Gallon : 855,  Gallon - 765"
+H-1228-2026,99097,Bazzini LLC,Allentown,PA,18106-3101,United States,Class I,Ongoing,20260523,20260819,"1,382,916 Pieces"
+H-1159-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,149 Cases
+H-1237-2026,99539,"Kerry, Inc",Beloit,WI,53511-9554,United States,Class I,Ongoing,20260729,20260812,6970 Cases
+H-1349-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,Florida: 260 units; Tennessee: 80 units; Texas: 264 units
+H-1146-2026,99124,Wise Foods Inc,Berwick,PA,18603-4533,United States,Class II,Ongoing,20260528,20260715,490 cases
+H-1101-2026,98281,Spring & Mulberry Inc.,Raleigh,NC,27606-6321,United States,Class I,Ongoing,20260109,20260701,"13,922 individual bars"
+,99757,"Unilever North America Supply Chain Company, LLC",Englewood Cliffs,NJ,07632-3113,United States,Not Yet Classified,Ongoing,20260811,20260930,"63,226 cases"
+H-1356-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Texas: 1,704 units"
+H-1144-2026,99314,Trafa Pharmaceutical Inc.,Chicopee,MA,01022-1309,United States,Class I,Ongoing,20260624,20260715,500 kg
+H-1190-2026,99419,Mellish Island Corp,San Dimas,CA,91773-2931,United States,Class II,Ongoing,20260701,20260805,"1,600 bottles"
+H-1171-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,167 Cases
+H-1125-2026,99255,"Western Mixers Produce & Nuts, Inc.",Ontario,CA,91761-7774,United States,Class I,Ongoing,20260615,20260708,29 cases (6 - 9oz packages/case) = 174 packages
+H-1299-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"1,161 cases"
+H-1348-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Kentucky: 421 units; Texas: 56,028 units"
+H-1089-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1382-2026,99744,Buckhead Meat Company D.B.A. Trinity Seafood,Lakewood,NJ,08701-6037,United States,Class II,Ongoing,20260724,20260923,332.9 lbs
+H-1082-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1123-2026,98867,"George J Howe Company, Inc.",Grove City,PA,16127-1109,United States,Class I,Terminated,20260429,20260701,2.00 Cases
+H-1111-2026,99099,Produce Innovations,Norwalk,IA,50211-9742,United States,Class III,Terminated,20260527,20260701,112 individual units
+H-1215-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1177-2026,99354,Vintage Roots LLC,Conrad,MT,59425-2655,United States,Class II,Terminated,20260613,20260729,7 bottles
+H-1178-2026,98304,"Modern Warrior Life, LLC",Scottsdale,AZ,85254-2069,United States,Class I,Ongoing,20260109,20260729,Unknown
+H-1304-2026,99646,Prince Bakery Inc,Bronx,NY,10458-6202,United States,Class III,Ongoing,20260813,20260909,150 units (total)
+H-1240-2026,99542,"Publix Super Markets, Inc.",Lakeland,FL,33811-3311,United States,Class I,Terminated,20260625,20260826,39520 units
+H-1386-2026,99803,"Best Friends Bakery, LLC",Connelly Springs,NC,28612-7483,United States,Class II,Ongoing,20260817,20260923,"1,416/3.5oz cookies"
+H-1232-2026,99434,"Prospector Popcorn, LLC",Ridgefield,CT,06877-6238,United States,Class II,Ongoing,20260715,20260826,"21,400 units (total)"
+H-1083-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1199-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,"Bulk distributors: 21,692 lbs. Retail: 7,465 lbs."
+H-1385-2026,99572,"Elegant Foods, LLC",Madison,WI,53714-3107,United States,Class II,Ongoing,20260724,20260923,300 cakes
+H-1368-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Florida: 2,560 units"
+H-1328-2026,99615,Marina Del Rey Foods inc.,Laval,N/A,N/A,Canada,Class I,Terminated,20260805,20260909,322 cases (12-4oz units/case)
+H-1115-2026,98864,"Utz Quality Foods, LLC",Hanover,PA,17331-1639,United States,Class I,Ongoing,20260428,20260701,5000 Bags
+H-1087-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1376-2026,99594,NatureBest Pre-Cut & Produce LLc,Missouri City,TX,77489-1236,United States,Class I,Ongoing,20260805,20260923,"62,856 cases (total)"
+H-1208-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1135-2026,99294,Provision Health Corp. dba PH Labs,San Diego,CA,92154-7210,United States,Class II,Ongoing,20260618,20260708,"6,967 units across all lots"
+H-1193-2026,99444,CHEER PACK,West Bridgewater,MA,02379-1027,United States,Class II,Ongoing,20260716,20260812,"322,450 (4 oz) units"
+H-1212-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1266-2026,99716,Dreyer's Grand  Ice Cream Inc.,Laurel,MD,20723-1357,United States,Class II,Ongoing,20260818,20260902,281 pallets
+H-1235-2026,99434,"Prospector Popcorn, LLC",Ridgefield,CT,06877-6238,United States,Class III,Ongoing,20260715,20260826,"21,400 units (total)"
+H-1289-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,585 cases
+H-1238-2026,99542,"Publix Super Markets, Inc.",Lakeland,FL,33811-3311,United States,Class I,Terminated,20260625,20260826,44994 units
+H-1373-2026,99594,NatureBest Pre-Cut & Produce LLc,Missouri City,TX,77489-1236,United States,Class I,Ongoing,20260805,20260923,"62,856 cases (total)"
+H-1088-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1362-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Illinois: 1,680 units; Texas: 1,440 units"
+H-1377-2026,99594,NatureBest Pre-Cut & Produce LLc,Missouri City,TX,77489-1236,United States,Class I,Ongoing,20260805,20260923,"62,856 cases (total)"
+H-1184-2026,99215,"Shandong Ling Xian Food Co.,LTD",Rizhao,N/A,N/A,China,Class III,Ongoing,20260602,20260729,751 cartons
+H-1169-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,170 Cases
+H-1357-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Florida: 3,920 units; Kentucky: 5,264 units; Texas: 19,920 units"
+H-1196-2026,98392,AKKARCO LLC,Lorton,VA,22079-1595,United States,Class I,Ongoing,20260128,20260812,1052 units
+H-1167-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,140 Cases
+H-1195-2026,99513,Big Way Ca Inc,Pomona,CA,91768-2153,United States,Class II,Ongoing,20260724,20260812,65 cases
+H-1384-2026,99572,"Elegant Foods, LLC",Madison,WI,53714-3107,United States,Class II,Ongoing,20260724,20260923,8 - 5 pound bags
+H-1225-2026,99540,FlavorsandColor.Com,Diamond Bar,CA,91789-2936,United States,Class III,Ongoing,20260728,20260819,80 cases
+H-1358-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Florida: 1,344 units; Kentucky 2,128 units; Texas: 7,168 units"
+H-1335-2026,99675,L-Nutra Inc,Los Angeles,CA,90230-7626,United States,Class II,Ongoing,20260807,20260916,"8,529 jars"
+H-1326-2026,99548,Ukrop's Homestyle Foods LLC,North Chesterfield,VA,23236-3956,United States,Class II,Ongoing,20260730,20260909,"10,337/13.8oz units"
+H-1263-2026,98691,ZMB Enterprises,Carlsbad,CA,92011-4653,United States,Class I,Ongoing,20260403,20260902,unknown
+H-1145-2026,99253,"Specialty Bakers, LLC",Marysville,PA,17053-1020,United States,Class II,Terminated,20260528,20260715,449 cases
+H-1090-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1372-2026,99594,NatureBest Pre-Cut & Produce LLc,Missouri City,TX,77489-1236,United States,Class I,Ongoing,20260805,20260923,"62,856 cases (total)"
+H-1165-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,121 Cases
+H-1181-2026,99373,Frutas y Hortalizas del Sur S.A.,San Cpubliclabel5s,,N/A,Chile,Class I,Ongoing,20260703,20260722,3640 cases
+H-1244-2026,99639,"Grand Central Bakery - Oregon Inc. dba Grand Central Bakery, Inc.",Portland,OR,97210-2110,United States,Class II,Ongoing,20260812,20260826,Potato Market Loaf 20oz = 288 units; Potato Table Loaf 20oz = 58 units; Mini Potato Loaf 12oz = 171 units
+H-1104-2026,98281,Spring & Mulberry Inc.,Raleigh,NC,27606-6321,United States,Class I,Ongoing,20260109,20260701,"9,932 individual bars"
+H-1168-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,150 Cases
+H-1198-2026,99351,"Eunha Fisheries Co., LTD",Gangseo,,N/A,Korea (the Republic of),Class II,Ongoing,20260701,20260812,445 units
+H-1256-2026,99635,"Dairyland Produce, LLC",Dallas,TX,75211-1318,United States,Class I,Ongoing,20260805,20260826,"7,456 lbs. total"
+H-1363-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Illinois: 3,360 units; Texas: 2,040 units"
+H-1271-2026,99690,"CUISINE, KETTLE",Savage,MD,20763-9747,United States,Class II,Ongoing,20260811,20260902,540 cases
+H-1099-2026,98281,Spring & Mulberry Inc.,Raleigh,NC,27606-6321,United States,Class I,Ongoing,20260109,20260701,"48,655 individual bars"
+H-1081-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1360-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Illinois: 3,720 units; Texas: 3,120 units"
+H-1153-2026,99074,Nutricia North America,White Plains,NY,10605-1490,United States,Class II,Ongoing,20260526,20260722,"2,050cs/12/12oz pouches + 55,310cs/24/12oz pouches"
+H-1097-2026,98281,Spring & Mulberry Inc.,Raleigh,NC,27606-6321,United States,Class I,Ongoing,20260109,20260701,"66,779 individual bars"
+H-1182-2026,99215,"Shandong Ling Xian Food Co.,LTD",Rizhao,N/A,N/A,China,Class III,Ongoing,20260602,20260729,751 cartons
+H-1086-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1173-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,120 cases
+H-1282-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,530 cases
+H-1383-2026,99572,"Elegant Foods, LLC",Madison,WI,53714-3107,United States,Class II,Ongoing,20260724,20260923,6 - 5 lb. bags
+H-1141-2026,98988,Adams Extract & Spice LLC,Gonzales,TX,78629-8008,United States,Class I,Terminated,20260612,20260715,32 units
+H-1174-2026,99306,AMY'S KITCHEN INC.,Petaluma,CA,94952-2303,United States,Class II,Ongoing,20260622,20260722,"15,350 cases (12 cans/case)"
+H-1134-2026,99294,Provision Health Corp. dba PH Labs,San Diego,CA,92154-7210,United States,Class II,Ongoing,20260618,20260708,"6,967 units across all lots"
+N/A,99869,KRAFT HEINZ FOODS COMPANY,Chicago,IL,60601-6436,United States,Not Yet Classified,Ongoing,20260903,20260923,1293 cases
+H-1110-2026,99198,Alb-USA Enterprises Inc,Bronx,NY,10474-6917,United States,Class II,Ongoing,20260521,20260701,15 (400g) boxed units (20 pieces/box)
+H-1149-2026,99335,Fresh & Ready Foods LLC,Renton,WA,98057-2960,United States,Class I,Terminated,20260625,20260715,377 units
+H-1098-2026,98281,Spring & Mulberry Inc.,Raleigh,NC,27606-6321,United States,Class I,Ongoing,20260109,20260701,"13,371 individual bars"
+H-1105-2026,98281,Spring & Mulberry Inc.,Raleigh,NC,27606-6321,United States,Class I,Ongoing,20260109,20260701,"31,254 individual bars"
+H-1392-2026,99717,United Sugar Producers and Refiners,Minneapolis,MN,55439-2597,United States,Class II,Ongoing,20260819,20260930,"4,265 CWT total"
+H-1116-2026,98864,"Utz Quality Foods, LLC",Hanover,PA,17331-1639,United States,Class I,Ongoing,20260428,20260701,14976 Bags
+H-1374-2026,99594,NatureBest Pre-Cut & Produce LLc,Missouri City,TX,77489-1236,United States,Class I,Ongoing,20260805,20260923,"62,856 cases (total)"
+H-1309-2026,99656,THE HAMPTON GROCER,Montauk,NY,11954-5095,United States,Class I,Ongoing,20260814,20260909,"4,059 units"
+H-1096-2026,98281,Spring & Mulberry Inc.,Raleigh,NC,27606-6321,United States,Class I,Ongoing,20260109,20260701,"41,159 individual bars"
+H-1161-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,129 Cases
+H-1264-2026,99716,Dreyer's Grand  Ice Cream Inc.,Laurel,MD,20723-1357,United States,Class II,Ongoing,20260818,20260902,644 pallets
+H-1275-2026,99493,Lidl US TRADING,Arlington,VA,22202,United States,Class II,Ongoing,20260722,20260902,200 units
+H-1291-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"48,404 cases"
+H-1170-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,46 Cases
+H-1200-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1307-2026,99646,Prince Bakery Inc,Bronx,NY,10458-6202,United States,Class II,Ongoing,20260813,20260909,150 units (total)
+H-1185-2026,99317,Total Nutrition Inc,Deer Park,NY,11729-4607,United States,Class I,Ongoing,20260626,20260729,8492 total units
+H-1163-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,144 Cases
+H-1247-2026,99640,"WFM Purchasing, LP",Austin,TX,78703-4644,United States,Class I,Ongoing,20260807,20260826,"12,995 units total"
+H-1365-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,Tennessee: 222 units
+H-1239-2026,99542,"Publix Super Markets, Inc.",Lakeland,FL,33811-3311,United States,Class I,Terminated,20260625,20260826,37260 units
+H-1224-2026,99516,SHEANDRO LLC,Venice,FL,34293-4061,United States,Class II,Terminated,20260723,20260819,76 cases (12/24Oz.)
+H-1157-2026,99238,"W.Y. Industries, Inc.",North Bergen,NJ,07047-1553,United States,Class II,Ongoing,20260604,20260722,"1,120 cases of duck sauce packets"
+H-1268-2026,99716,Dreyer's Grand  Ice Cream Inc.,Laurel,MD,20723-1357,United States,Class II,Ongoing,20260818,20260902,226 pallets
+H-1124-2026,99118,CERELES EN GENERAL SAS,Santo Domingo,N/A,N/A,Dominican Republic (the),Class I,Terminated,20260513,20260701,"25,450 individual retail units"
+H-1106-2026,98281,Spring & Mulberry Inc.,Raleigh,NC,27606-6321,United States,Class I,Ongoing,20260109,20260701,"23,968 individual bars"
+H-1274-2026,99493,Lidl US TRADING,Arlington,VA,22202,United States,Class II,Ongoing,20260722,20260902,500 units
+H-1292-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"4,897 cases"
+H-1281-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"4,444 cases"
+H-1285-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"16,314 cases"
+H-1288-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"1,956 cases"
+H-1366-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,Tennessee: 73 units
+H-1147-2026,99235,Wondermade LLC,Sanford,FL,32771-1304,United States,Class II,Ongoing,20260611,20260715,154 boxes
+H-1394-2026,99884,WWF Operating Company,Louisville,CO,80027-3005,United States,Class II,Ongoing,20260915,20260930,"2,209,728 units"
+H-1330-2026,99636,EXOTIQUE FOODS CANADA,Etobicoke,,N/A,Canada,Class I,Ongoing,20260807,20260916,68 cases
+H-1287-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"5,900 cases"
+H-1197-2026,99351,"Eunha Fisheries Co., LTD",Gangseo,,N/A,Korea (the Republic of),Class II,Ongoing,20260701,20260812,"1,470 units"
+H-1183-2026,99215,"Shandong Ling Xian Food Co.,LTD",Rizhao,N/A,N/A,China,Class III,Ongoing,20260602,20260729,4477 cartons
+H-1093-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1352-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,Texas: 495 units
+H-1333-2026,99605,"Horizon Organic Dairy, LLC",Broomfield,CO,80021-2728,United States,Class II,Ongoing,20260807,20260902,"53,760 cases= (12 CT) 34,524 cases and (18 CT) 19,236 cases"
+H-1350-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,Texas: 668 units
+H-1303-2026,99587,"Ron's Home Style Foods, Inc.",Houston,TX,77085-1429,United States,Class I,Terminated,20260806,20260909,2270 lbs. (total)
+H-1121-2026,98867,"George J Howe Company, Inc.",Grove City,PA,16127-1109,United States,Class I,Terminated,20260429,20260701,19.00 Cases
+H-1120-2026,98867,"George J Howe Company, Inc.",Grove City,PA,16127-1109,United States,Class I,Terminated,20260429,20260701,8.00 Cases
+H-1248-2026,99640,"WFM Purchasing, LP",Austin,TX,78703-4644,United States,Class I,Ongoing,20260807,20260826,"12,995 units total"
+H-1158-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,368 Cases
+H-1338-2026,99737,"Everything Sprouts, LLC",Minneapolis,MN,55406-1546,United States,Class I,Ongoing,20260822,20260923,163.44 pounds
+H-1388-2026,99841,Optimus Inc. d/b/a/ Markys Caviar,Miami Gardens,FL,33169-5806,United States,Class I,Ongoing,20260825,20260923,22 cases (44 units)
+H-1156-2026,98931,Chocolate Bar Holdings LLC,Houston,TX,77025-3901,United States,Class II,Completed,20260427,20260722,24 total units (various shapes/sizes)
+H-1139-2026,98988,Adams Extract & Spice LLC,Gonzales,TX,78629-8008,United States,Class I,Terminated,20260612,20260715,20 units
+H-1103-2026,98281,Spring & Mulberry Inc.,Raleigh,NC,27606-6321,United States,Class I,Ongoing,20260109,20260701,"111,733 individual bars"
+H-1272-2026,99560,Blank Slate Creamery Production,Ann Arbor,MI,48103-9559,United States,Class I,Terminated,20260801,20260812,66 individual retail units
+H-1137-2026,99242,NARA ORGANICS INC,New York,NY,10007-2140,United States,Class I,Ongoing,20260613,20260708,"377,610 cans"
+H-1131-2026,99082,"Boichik Bagels, Inc.",Berkeley,CA,94710-1401,United States,Class II,Ongoing,20260522,20260701,167 containers
+H-1164-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,111 Cases
+H-1269-2026,99716,Dreyer's Grand  Ice Cream Inc.,Laurel,MD,20723-1357,United States,Class II,Ongoing,20260818,20260902,94 pallets
+H-1251-2026,99640,"WFM Purchasing, LP",Austin,TX,78703-4644,United States,Class I,Ongoing,20260807,20260826,"12,995 units total"
+H-1130-2026,99292,MARS SNACKING,Chicago,IL,60642-2404,United States,Class II,Completed,20260618,20260708,"17,218 cases"
+H-1260-2026,99424,KHONG GUAN (HQ),Union City,CA,94587,United States,Class I,Ongoing,20260713,20260902,37 cases (33 units/case)
+H-1204-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,Unknown
+H-1347-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Kentucky: 832 units; Texas: 59,313 units"
+H-1194-2026,99460,Pack'n Fresh LLC,Grand Prairie,TX,75050-1121,United States,Class II,Ongoing,20260709,20260812,"109,600 units"
+H-1346-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Tennessee: 255 units; Texas: 20,055 units"
+H-1246-2026,99640,"WFM Purchasing, LP",Austin,TX,78703-4644,United States,Class I,Ongoing,20260807,20260826,"12,995 units total"
+H-1102-2026,98281,Spring & Mulberry Inc.,Raleigh,NC,27606-6321,United States,Class I,Ongoing,20260109,20260701,"79,156 individual bars"
+H-1361-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Illinois: 2,760 units; Texas: 2,040 units"
+H-1280-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"109,476 cases"
+H-1306-2026,99646,Prince Bakery Inc,Bronx,NY,10458-6202,United States,Class III,Ongoing,20260813,20260909,150 units (total)
+H-1340-2026,99737,"Everything Sprouts, LLC",Minneapolis,MN,55406-1546,United States,Class I,Ongoing,20260822,20260923,278.44 lbs.
+H-1253-2026,99640,"WFM Purchasing, LP",Austin,TX,78703-4644,United States,Class I,Ongoing,20260807,20260826,"12,995 units total"
+H-1375-2026,99594,NatureBest Pre-Cut & Produce LLc,Missouri City,TX,77489-1236,United States,Class I,Ongoing,20260805,20260923,"62,856 cases (total)"
+H-1202-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1216-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1323-2026,99508,Wonton Specialists,Brooklyn,NY,11206,United States,Class III,Ongoing,20260728,20260909,480 bags
+H-1322-2026,99508,Wonton Specialists,Brooklyn,NY,11206,United States,Class III,Ongoing,20260728,20260909,300 bags
+H-1207-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1236-2026,99451,CAMPO RICO FOODS LLC,Metairie,LA,70001-5955,United States,Class III,Completed,20260618,20260812,11 cases
+H-1150-2026,99324,"Lehi Valley Trading Company, Inc",Mesa,AZ,85215-2531,United States,Class I,Terminated,20260624,20260715,624 plastic 15oz tubs: 585 lbs total
+H-1296-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"3,018 cases"
+H-1390-2026,99842,Evergreen Fresh Sprouts LLC,Moyie Springs,ID,83845-4907,United States,Class I,Ongoing,20260904,20260930,322.50 lbs.
+H-1243-2026,99618,Lidl US TRADING,Arlington,VA,22202,United States,Class I,Ongoing,20260810,20260826,"2,040 containers"
+H-1218-2026,99325,La Colonia Foods Llc,Rockville,MD,20850-5223,United States,Class I,Ongoing,20260604,20260812,205 (14-oz) units
+H-1319-2026,99644,Savor Seasonings LLC,Batavia,OH,45103,United States,Class I,Ongoing,20260807,20260909,"10,961 lbs"
+H-1301-2026,99575,"Jaime's Foods ATX, LLC",Austin,TX,78744-1779,United States,Class I,Ongoing,20260805,20260902,102 cases
+H-1279-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"10,384 cases"
+H-1294-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,190 cases
+H-1229-2026,99479,MIDWEST POULTRY SERVC C/O H & LELECTRIC,N Manchester,IN,46962,United States,Class I,Terminated,20260722,20260819,"1,589,577 dozen total"
+H-1091-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1324-2026,99508,Wonton Specialists,Brooklyn,NY,11206,United States,Class III,Ongoing,20260728,20260909,240 bags
+H-1277-2026,99629,"Byron White Formulas, Inc.",Santa Rosa,CA,95404-1740,United States,Class II,Ongoing,20260811,20260902,"3,486 units"
+H-1359-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,"Illinois: 5,760 units; Texas: 3,720 units"
+H-1270-2026,99519,"529 COMMERCE, LLC",Parkland,FL,33067-1211,United States,Class I,Ongoing,20260728,20260819,3860 units
+H-1267-2026,99716,Dreyer's Grand  Ice Cream Inc.,Laurel,MD,20723-1357,United States,Class II,Ongoing,20260818,20260902,44 pallets
+H-1113-2026,98864,"Utz Quality Foods, LLC",Hanover,PA,17331-1639,United States,Class I,Ongoing,20260428,20260701,179837 Bags
+H-1276-2026,99629,"Byron White Formulas, Inc.",Santa Rosa,CA,95404-1740,United States,Class II,Ongoing,20260811,20260902,"18,791 units"
+H-1257-2026,99650,GET FRESH PRODUCE,Bartlett,IL,60103-1695,United States,Class I,Ongoing,20260805,20260826,802 cases
+H-1336-2026,99830,FOODS ALIVE INC.,Angola,IN,46703-1065,United States,Class I,Ongoing,20260826,20260923,1691 pouches
+H-1154-2026,99293,General Mills James Ford Bell Technical Center,Golden Valley,MN,55427-3870,United States,Class II,Ongoing,20260619,20260722,3080 cases
+H-1122-2026,98867,"George J Howe Company, Inc.",Grove City,PA,16127-1109,United States,Class I,Terminated,20260429,20260701,7.00 Cases
+H-1242-2026,99569,Coast Citrus Distributors,San Diego,CA,92154-7419,United States,Class I,Ongoing,20260722,20260826,"53,760 Cases"
+H-1298-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,855 cases
+H-1302-2026,99587,"Ron's Home Style Foods, Inc.",Houston,TX,77085-1429,United States,Class I,Terminated,20260806,20260909,2270 lbs. (total)
+H-1084-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1389-2026,99702,"Elegant Foods, LLC",Madison,WI,53714-3107,United States,Class II,Ongoing,20260727,20260930,10 lbs.
+H-1254-2026,99640,"WFM Purchasing, LP",Austin,TX,78703-4644,United States,Class I,Ongoing,20260807,20260826,"12,995 units total"
+H-1344-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,Rhode Island: 416 units
+H-1155-2026,99293,General Mills James Ford Bell Technical Center,Golden Valley,MN,55427-3870,United States,Class II,Ongoing,20260619,20260722,1260 cases
+H-1148-2026,99335,Fresh & Ready Foods LLC,Renton,WA,98057-2960,United States,Class I,Terminated,20260625,20260715,216 units
+H-1092-2026,98975,Joy Gourmet Foods LLC.,Maspeth,NY,11378-2110,United States,Class II,Completed,20260423,20260701,50 gallons (total)
+H-1284-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"7,251 cases"
+H-1321-2026,99508,Wonton Specialists,Brooklyn,NY,11206,United States,Class III,Ongoing,20260728,20260909,550 bags
+H-1186-2026,99357,GELLERT GLOBAL GROUP,Elizabeth,NJ,07206,United States,Class I,Ongoing,20260625,20260729,"29,850 units"
+H-1132-2026,99082,"Boichik Bagels, Inc.",Berkeley,CA,94710-1401,United States,Class II,Ongoing,20260522,20260701,164 containers
+H-1367-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,Kentucky: 285 units
+H-1262-2026,99695,"Sirna and Sons Produce, Inc",Ravenna,OH,44266-9189,United States,Class I,Ongoing,20260805,20260902,249 bags
+H-1332-2026,99619,UPSTATE NIAGARA COOPERATIVE,Lancaster,NY,14086-1316,United States,Class II,Ongoing,20260810,20260902,"3,975 cases"
+H-1345-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,Rhode Island: 638 units
+H-1203-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,Unknown
+H-1151-2026,99231,"Wells Enterprises, Inc.",Le Mars,IA,51031-3044,United States,Class II,Terminated,20260610,20260708,195 cases
+H-1217-2026,99325,La Colonia Foods Llc,Rockville,MD,20850-5223,United States,Class I,Ongoing,20260604,20260812,670 (14-oz) units
+H-1211-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1290-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"1,834 cases"
+H-1162-2026,99040,"D'Dioses Fruit Pops, Inc.",Paterson,NJ,07503-3126,United States,Class I,Ongoing,20260504,20260722,40 Cases
+H-1343-2026,99755,Quality Dairy Farms Inc.,Boonville,NY,13309-3532,United States,Class II,Ongoing,20260825,20260923,7 units
+H-1380-2026,99831,Frutas y Hortalizas del Sur S.A.,San Cpubliclabel5s,N/A,N/A,Chile,Class I,Ongoing,20260828,20260923,"3,026 cases"
+H-1255-2026,99640,"WFM Purchasing, LP",Austin,TX,78703-4644,United States,Class I,Ongoing,20260807,20260826,"12,995 units total"
+H-1273-2026,99538,"Botticelli Foods, LLC",Hauppauge,NY,11788,United States,Class I,Ongoing,20260717,20260902,"16,200 units"
+H-1300-2026,99470,Piazza Produce (dba CIBUS Fresh),Noblesville,IN,46060-4385,United States,Class I,Terminated,20260720,20260819,1279 retail units
+H-1295-2026,99453,ExportA Farms de Mexico S. de R.L. de C.V.,Doctor Mora,,N/A,Mexico,Class I,Ongoing,20260717,20260819,"2,434 cases"
+H-1220-2026,99325,La Colonia Foods Llc,Rockville,MD,20850-5223,United States,Class I,Ongoing,20260604,20260812,19 (18-lb bucket) units
+H-1221-2026,99358,JINA F&C,Gyeongju,,N/A,Korea (the Republic of),Class II,Ongoing,20260701,20260812,"4,153 units"
+H-1353-2026,99611,ExportA Fresh Foods Inc,Salinas,CA,93901-3441,United States,Class I,Ongoing,20260807,20260923,Tennessee: 60 units; Texas: 585 units
+H-1337-2026,99737,"Everything Sprouts, LLC",Minneapolis,MN,55406-1546,United States,Class I,Ongoing,20260822,20260923,"1,830.25 pounds"
+H-1209-2026,99211,"Clover Hill Dairy, LLC",Mechanicsville,MD,20659-4120,United States,Class I,Ongoing,20260601,20260812,unknown
+H-1142-2026,98988,Adams Extract & Spice LLC,Gonzales,TX,78629-8008,United States,Class II,Terminated,20260612,20260715,N/A
+H-1341-2026,99822,"International Sprout Holdings, Inc",Cookeville,TN,38506-5026,United States,Class I,Ongoing,20260823,20260916,"43,799 lbs."
+H-1381-2026,99642,Africando Foods LLC,Iowa City,IA,52240-4528,United States,Class II,Ongoing,20260810,20260902,720 (8 oz) jars
+H-1118-2026,98867,"George J Howe Company, Inc.",Grove City,PA,16127-1109,United States,Class I,Terminated,20260429,20260701,1797.67 Cases
+H-1334-2026,99682,Ferrero USA,North Canton,OH,44720-1572,United States,Class II,Ongoing,20260814,20260916,1488 retail units

@@ -1,0 +1,10 @@
+id = "humanize-intcomma-overflow"
+title = "Fix intcomma() raising OverflowError for very large integers"
+category = "fix"
+source = "https://github.com/python-humanize/humanize/pull/392"
+licence = "MIT"
+created = "2026-10-09"
+prompt = "prompt.md"
+check_timeout = 120
+# Run from the working copy after hidden/ is copied in as tests_hidden/ (upstream test_number.py at the fix commit).
+check = ["env", "PYTHONPATH=src", "uv", "run", "--no-project", "--with", "pytest", "--with", "freezegun", "--with", "pytest-benchmark", "python", "-m", "pytest", "tests_hidden", "-q", "-p", "no:cacheprovider", "--rootdir", "."]

@@ -1,0 +1,11 @@
+id = "taskiq-lazy-logging"
+title = "Switch f-string logging to lazy %-style across the package and enforce it with ruff"
+category = "chore"
+source = "https://github.com/taskiq-python/taskiq/pull/665"
+licence = "MIT"
+created = "2026-10-09"
+prompt = "prompt.md"
+git_tag = "v0.0.1"
+check_timeout = 300
+# Run from the working copy after hidden/ is copied in as tests_hidden/.
+check = ["python3", "tests_hidden/check.py"]

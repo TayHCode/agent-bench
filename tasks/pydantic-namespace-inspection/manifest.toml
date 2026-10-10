@@ -1,0 +1,50 @@
+id = "pydantic-namespace-inspection"
+source_url = "https://github.com/pydantic/pydantic/pull/13596"
+source_repo = "pydantic/pydantic"
+language = "Python"
+licence = "MIT"
+licence_file = "LICENSE-SOURCE"
+base_commit = "b348cf0dce91e1cf1a3e918402e4bb8e4e6203b2"
+fix_commit = "111c942fa87f68d36006095e9881de9049de8556"
+pr_created = "2026-08-06"
+fix_merged = "2026-08-06"
+fix_after_2026_06_30 = true
+fix_author = "Viicos"
+ai_authorship_check = "Checked PR author, body, labels, all PR commit messages, squash merge, comments and reviews. No AI-generation disclosure or Claude/Codex/model co-author trailer found. Automated performance/coverage/review comments are not fix authors. Undisclosed AI use cannot be ruled out."
+changes_to_start_checkout = "Pinned upstream base, with unrelated automation and tooling omitted by snapshot.toml; no source changed. The unchanged bundled pydantic-core source is built before the timed probe; the published wheel lacks a separate pre-existing core fix. Dependencies installed before timing."
+hidden_check = "Four complete upstream suites at the fix commit: test_fields.py, test_main.py, test_parse.py, test_private_attributes.py. Includes new inherited Annotated/private-field regression, descriptor __set_name__ coverage and error compatibility checks. Python 3.14 exercises lazy annotations."
+why_it_matches_a_real_workflow = "399 changed source lines (additions plus removals) across _config.py, _fields.py and _model_construction.py in the real merged refactor. Deferred Python annotations, class creation, descriptor __set_name__, private attributes and consistent public error codes interact."
+
+[workflow_match]
+q1_done_in_a_normal_week = "Yes: maintaining an existing library from a maintainer request or user regression report."
+q2_real_artifact_not_invented = "Yes: real merged public PR and its original report; no invented bug or weakened start."
+q3_success_is_what_the_requester_would_check = "Yes: original upstream regression tests plus adjacent suites establish correctness."
+q4_needs_the_usual_toolkit = "Yes: reproduce, trace interacting modules, edit Python and run the project test suite."
+q5_no_private_data_and_no_leak_of_the_fix = "Yes: public MIT code; hidden cases and fixed source are downloaded outside the contestant checkout."
+
+[gold_comparison]
+source = "All files changed by the merged PR, fetched at fix_commit."
+
+[distribution]
+mode = "pinned public reconstruction recipe; source and gold fetched only on explicit prepare"
+
+[validation]
+repeats = 2
+start_fails = true
+gold_passes = true
+flaky = false
+
+[difficulty_probe]
+model = "claude-sonnet-5-5"
+cli = "Claude Code"
+effort = "medium"
+effort_verified = true
+wall_seconds = 29.1
+passed = false
+check_passed = false
+usd_equivalent = 0.10344
+fresh_tokens = 16749
+max_fresh_tokens = 300000
+max_minutes = 20
+max_usd = 1.5
+retained_reason = "Probe finished but failed upstream hidden tests; fails the check criterion applies regardless of elapsed time."

@@ -1,0 +1,9 @@
+id = "median-bug"
+title = "Fix median() for even-length and unsorted lists"
+category = "fix"
+source = "synthetic"
+licence = "MIT"
+created = "2026-10-09"
+prompt = "prompt.md"
+# Run from the working copy after hidden/ is copied in as tests_hidden/.
+check = ["python3", "-m", "unittest", "discover", "-s", "tests_hidden"]

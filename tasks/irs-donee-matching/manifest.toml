@@ -1,0 +1,31 @@
+# Source manifest for irs-donee-matching
+id = "irs-donee-matching"
+source_url = "https://www.irs.gov/charities-non-profits/exempt-organizations-business-master-file-extract-eo-bmf"
+source_repo = "IRS EO BMF (CT, ME, NH, RI, VT extracts), Publication 78 data, auto-revocation list"
+language = "CSV / any"
+licence = "public domain (US government work, 17 U.S.C. 105)"
+licence_file = "LICENSE-SOURCE"
+base_commit = "n/a (downloaded 2026-10-10 from irs.gov; the BMF extracts, Pub 78 file and revocation file are the current monthly/weekly publications)"
+fix_commit = "n/a (known answer produced by tasks/irs-donee-matching/build_reference.py; the true EINs come from Publication 78 itself)"
+pr_created = "n/a"
+fix_merged = "n/a"
+fix_after_2026_06_30 = true
+fix_author = "n/a (government datasets; the answer file is derived by this benchmark's build script, not written by any model)"
+ai_authorship_check = "Not applicable: no code fix; the known answer is produced by the benchmark build script."
+changes_to_start_checkout = "BMF extracts with consistent neutral aliases for entity labels overlapping private terms. donees.csv is a seeded sample of 709 Publication 78 rows (name, city, state) in shuffled order, EINs withheld: 657 match exactly one BMF organization, 40 share their name, city and state with other organizations, 12 have no match; the sample is enriched with 63 names the BMF stores with a lost space where it wrapped the name over two fields and with organizations that have a revocation record (27 rows are currently revoked by the prompt's rule). The revocation file is cut to the rows whose EIN is in the BMF extracts or the New England Pub 78 rows; IDs, dates and numerical fields are retained; matching entity labels use the same aliases throughout. The Pub 78 cut-down used for the sample is kept in build/ (outside repo/)."
+hidden_check = "check.py: matched.csv against the known answer, cell for cell, at most 3 wrong rows of 709 (one tolerance: a correct EIN on a 'many' row)."
+why_it_matches_a_real_workflow = "Matching a list of organizations that has no IDs to an official registry by name and place, then enriching it (registry fields, date and money formats, a status that depends on an events table with reinstatements): the everyday job of reconciling a donee, vendor or member list against an external source."
+
+[workflow_match]
+# Five descriptive questions document the task's workflow relevance.
+q1_done_in_a_normal_week = "Yes: reconciling a name-only list against a registry and adding status columns."
+q2_real_artifact_not_invented = "Yes: real IRS files with their real quirks (names wrapped over two fields with a lost space, DD-MON-YYYY dates, YYYYMM dates, headerless pipe files with blank first lines, multiple revocation rows per EIN, reinstatements)."
+q3_success_is_what_the_requester_would_check = "Yes: the true EINs are known (they are in the Publication 78 rows the list came from) and the status rules are stated in the prompt."
+q4_needs_the_usual_toolkit = "Yes: inspect the data, write a script, produce a file."
+q5_no_private_data_and_no_leak_of_the_fix = "Yes: public-domain data, no private fields; the answer file and the EINs are not in the start checkout."
+
+# Export preparation: unrelated upstream docs, media and build lockfiles omitted;
+# contact metadata generalised. Selected checks and upstream gold code retained.
+
+[distribution]
+mode = "bundled public-domain data with neutral aliases for entity labels overlapping private terms"

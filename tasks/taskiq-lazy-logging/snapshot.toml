@@ -1,0 +1,6 @@
+source_repo = "taskiq-python/taskiq"
+base_commit = "9ce2069a49fcf20e9348ac214bd5a8056382dd15"
+fix_commit = "9fa2a1cb915c77e87a10320cce034ec8ba8a3499"
+exclude = [".github", "imgs"]
+gold_paths = ["pyproject.toml", "taskiq/abc/broker.py", "taskiq/abc/middleware.py", "taskiq/abc/schedule_source.py", "taskiq/acks.py", "taskiq/cli/scheduler/run.py", "taskiq/cli/utils.py", "taskiq/cli/watcher.py", "taskiq/cli/worker/process_manager.py", "taskiq/cli/worker/run.py", "taskiq/kicker.py", "taskiq/middlewares/prometheus_middleware.py", "taskiq/receiver/receiver.py", "taskiq/schedule_sources/label_based.py"]
+pristine_tests = true

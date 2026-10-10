@@ -1,0 +1,21 @@
+source_repo = "pydantic/pydantic"
+base_commit = "b348cf0dce91e1cf1a3e918402e4bb8e4e6203b2"
+fix_commit = "111c942fa87f68d36006095e9881de9049de8556"
+exclude = [".github", "docs", "tests/benchmarks"]
+gold_paths = ["pydantic/_internal/_config.py", "pydantic/_internal/_fields.py", "pydantic/_internal/_model_construction.py", "tests/test_fields.py", "tests/test_main.py", "tests/test_parse.py", "tests/test_private_attributes.py"]
+
+[[hidden_files]]
+from = "tests/test_fields.py"
+to = "test_fields.py"
+
+[[hidden_files]]
+from = "tests/test_main.py"
+to = "test_main.py"
+
+[[hidden_files]]
+from = "tests/test_parse.py"
+to = "test_parse.py"
+
+[[hidden_files]]
+from = "tests/test_private_attributes.py"
+to = "test_private_attributes.py"

@@ -1,0 +1,10 @@
+id = "mypy-deferred-alias-crash"
+title = "mypy crashes (NotImplementedError in tuple_fallback) on a tuple alias that unpacks another alias"
+category = "debug"
+source = "https://github.com/python/mypy/pull/22096"
+licence = "MIT"
+created = "2026-10-10"
+prompt = "prompt.md"
+check_timeout = 600
+# Run from the working copy after hidden/ is copied in as tests_hidden/ (upstream test-data cases at the fix commit).
+check = ["bash", "tests_hidden/check.sh"]

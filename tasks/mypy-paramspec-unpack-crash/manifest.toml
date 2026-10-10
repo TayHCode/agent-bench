@@ -1,0 +1,51 @@
+id = "mypy-paramspec-unpack-crash"
+source_url = "https://github.com/python/mypy/pull/22123"
+source_repo = "python/mypy"
+language = "Python"
+licence = "MIT"
+licence_file = "LICENSE-SOURCE"
+base_commit = "8305c99691686338d266651a46572f5475d1c6d9"
+fix_commit = "6a6979c49a96d677396fe6df7301c903c7bcc01e"
+pr_created = "2026-10-06"
+fix_merged = "2026-10-08"
+fix_after_2026_06_30 = true
+fix_author = "ilevkivskyi"
+ai_authorship_check = "Checked PR author, body, labels, all PR commit messages, squash merge, comments and reviews. No AI-generation disclosure or Claude/Codex/model co-author trailer found. Automated performance/coverage/review comments are not fix authors. Undisclosed AI use cannot be ruled out."
+prompt_reproduction_note = "The mapping get parameter is named lookup in the prompt excerpt; its type and behavior are unchanged. Upstream source, gold and hidden tests remain original."
+changes_to_start_checkout = "Pinned upstream base, with unrelated automation and tooling omitted by snapshot.toml; no source changed. Dependencies installed before the timed probe."
+hidden_check = "Upstream check-python312.test at the fix commit, including the new contextmanager/ParamSpec/TypeVarTuple regression. Seven neighboring data-driven suites also run: python312, typevar-tuple, generics, parameter-specification, callable, overloading, typeddict."
+why_it_matches_a_real_workflow = "Real user crash report #21778, opened 2026-07-27. The traceback ends at visit_type_var_tuple raising NotImplementedError, but the missing tuple-unpack normalization is in parameter-list expansion. The human fix shares CallableType and Parameters normalization via a base class (423 changed source lines in two modules), rather than suppressing the terminal exception."
+
+[workflow_match]
+q1_done_in_a_normal_week = "Yes: maintaining an existing library from a maintainer request or user regression report."
+q2_real_artifact_not_invented = "Yes: real merged public PR and its original report; no invented bug or weakened start."
+q3_success_is_what_the_requester_would_check = "Yes: original upstream regression tests plus adjacent suites establish correctness."
+q4_needs_the_usual_toolkit = "Yes: reproduce, trace interacting modules, edit Python and run the project test suite."
+q5_no_private_data_and_no_leak_of_the_fix = "Yes: public MIT code; hidden cases and fixed source are downloaded outside the contestant checkout."
+
+[gold_comparison]
+source = "All files changed by the merged PR, fetched at fix_commit."
+
+[distribution]
+mode = "pinned public reconstruction recipe; source and gold fetched only on explicit prepare"
+
+[validation]
+repeats = 2
+start_fails = true
+gold_passes = true
+flaky = false
+
+[difficulty_probe]
+model = "claude-sonnet-5-5"
+cli = "Claude Code"
+effort = "medium"
+effort_verified = true
+wall_seconds = 97.7
+passed = false
+check_passed = false
+usd_equivalent = 0.18651
+fresh_tokens = 29586
+max_fresh_tokens = 300000
+max_minutes = 20
+max_usd = 1.5
+retained_reason = "Probe finished but failed the upstream hidden regression; fails the check criterion applies regardless of elapsed time."

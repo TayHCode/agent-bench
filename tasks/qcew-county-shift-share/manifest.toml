@@ -1,0 +1,67 @@
+id = "qcew-county-shift-share"
+source_url = "https://www.bls.gov/cew/downloadable-data-files.htm"
+source_repo = "BLS QCEW quarterly singlefile ZIPs, 2025 and 2026"
+language = "CSV / any"
+licence = "public domain (US government work, 17 U.S.C. 105)"
+licence_file = "LICENSE-SOURCE"
+base_commit = "n/a; exact original BLS bytes pinned by SHA-256 in data_recipe.toml"
+fix_commit = "n/a; exact rational known answers generated from official published cells"
+pr_created = "n/a"
+fix_merged = "2026-08-28 (2026 Q1 data release)"
+fix_after_2026_06_30 = true
+fix_author = "n/a; official government datasets, no upstream code fix"
+ai_authorship_check = "Not applicable to official data. Reference arithmetic is original benchmark preparation code, not a claimed human upstream fix."
+changes_to_start_checkout = "None: both original ZIPs are downloaded at prepare time, checksum-verified and copied unchanged. Only an input README is added."
+hidden_check = "Both complete CSVs, all rows and columns, against exact rational known answers. No row errors tolerated; numeric tolerance 0.00002 permits six-decimal output. Order is not graded; duplicate, extra and missing keys fail."
+why_it_matches_a_real_workflow = "An analyst's quarterly regional employment update across two vintages: reconcile 2.67 GB of real nested geographic/industry/ownership cells, suppression, missing observations, range-coded sectors, quarterly averaging, national baselines, location quotients, wage ratios and county residuals."
+
+[workflow_match]
+q1_done_in_a_normal_week = "Yes: regional employment analysis and reconciling a sector dashboard against official totals."
+q2_real_artifact_not_invented = "Yes: unchanged public BLS exports released after the cutoff; all traps arise from actual aggregation, disclosure and numeric fields."
+q3_success_is_what_the_requester_would_check = "Yes: two complete deliverables with consistent sums, exact official IDs, suppression handling and published-total reconciliation."
+q4_needs_the_usual_toolkit = "Yes: inspect compressed CSV, read agency field definitions, stream/filter/join data, implement shift-share and audit residuals."
+q5_no_private_data_and_no_leak_of_the_fix = "Yes: public-domain government data; preparer and known answers remain outside the contestant repo."
+
+[gold_comparison]
+source = "Known answer CSVs calculated from original cells using Fraction arithmetic; independently checked with a floating-point implementation before acceptance."
+
+[distribution]
+mode = "checksum-pinned download through agentbench task prepare; no source data or answer ships"
+prepare = "agentbench task prepare qcew-county-shift-share --tasks-dir /tmp/benchmark-tasks --cache-dir /tmp/benchmark-downloads"
+
+[validation]
+repeats = 2
+start_fails = true
+gold_passes = true
+flaky = false
+independent_sql_matches_all_cells = true
+sector_rows = 58712
+county_rows = 3143
+
+[difficulty_probe]
+valid = true
+model = "claude-sonnet-5-5"
+cli = "Claude Code"
+effort = "medium"
+effort_verified = true
+model_verified = true
+fresh_input_verification = true
+wall_seconds = 143.8
+wall_minutes = 2.3967
+passed = false
+check_passed = false
+usd_equivalent = 0.20273
+cli_reported_usd = 0.1868228
+fresh_tokens = 28719
+max_fresh_tokens = 300000
+max_minutes = 20
+max_usd = 1.5
+peeked = false
+failure_reason = "Both deliverables were produced but their complete keysets fail: 58,458 sector rows and 3,126 county rows versus 58,712 and 3,143 required. Inputs were present and checksum-verified."
+retained_reason = "Valid n=1 failed full-check probe; retain as a hard candidate. Successful solve duration is unproven. The task was not weakened or made harder."
+
+[superseded_invalid_probe]
+valid = false
+wall_seconds = 81.5
+usd_equivalent = 0.12195
+reason = "Earlier missing-deliverable result excluded from difficulty evidence; the release owner requested a fresh input-verified probe."

@@ -1,0 +1,32 @@
+# Source manifest for werkzeug-apply-conditions
+id = "werkzeug-apply-conditions"
+source_url = "https://github.com/pallets/werkzeug/pull/3308"
+source_repo = "pallets/werkzeug"
+language = "Python"
+licence = "BSD-3-Clause"
+licence_file = "LICENSE-SOURCE"
+base_commit = "671537e0e5c7dcec4ac61ffc755dbd8936cefcfb"
+fix_commit = "830d4b3957e9532be5f510e499dd797964d064d6"
+pr_created = "2026-09-27"
+fix_merged = "2026-09-27"
+fix_after_2026_06_30 = true
+fix_author = "Pallets maintainer (see source PR); resolves his own issue #3291 (opened 2026-09-24)"
+ai_authorship_check = "Checked PR author, the six commit messages and the squash-merge text, PR body, comments and labels for Claude, Codex, Anthropic, OpenAI, ChatGPT, Copilot, Gemini, Cursor, bot accounts and 'generated with' markers: none found. An undisclosed AI-written fix cannot be detected this way."
+changes_to_start_checkout = "Upstream tree at the base commit, only .github/ removed. The prompt adds a short 'Interface to implement' section (method names, the exists keyword, the exceptions) taken from the PR description, because the hidden tests call those names."
+hidden_check = "check.sh: upstream tests/test_apply_conditions.py (26 test cases) and tests/test_apply_range.py (19) from the fix commit, plus the fix commit's tests/test_wrappers.py and tests/test_http.py (the same files with the tests of the deprecated make_conditional helpers removed, so an agent may deprecate them or leave them). Warnings are errors in the project's pytest config. The fix commit's send_file and SharedDataMiddleware tests are not used: the issue only mentions that work in passing."
+why_it_matches_a_real_workflow = "A maintainer's design issue for correcting HTTP conditional-request and range handling to match RFC 9110: read the existing implementation, work out the order and semantics from the spec and a list of known defects, add two methods and the exceptions they raise, and test them. About 860 changed source lines (additions plus removals, tests and docs excluded) in the real fix, across 8 source files."
+
+[workflow_match]
+# Five descriptive questions document the task's workflow relevance.
+q1_done_in_a_normal_week = "Yes: implementing a specified behaviour change in an existing library, with tests."
+q2_real_artifact_not_invented = "Yes: a real issue (the prompt is its text plus the maintainer's follow-up) and the real merged PR."
+q3_success_is_what_the_requester_would_check = "Yes: the maintainers' own unit tests for the new methods, plus the existing wrapper and http suites."
+q4_needs_the_usual_toolkit = "Yes: read the spec-driven code, write several methods and helpers, add tests, run pytest through uv."
+q5_no_private_data_and_no_leak_of_the_fix = "Yes: public BSD-3-Clause repo; the fix and its tests are not in the start checkout."
+
+[gold_comparison]
+# gold/ holds every file the PR changed (source, docs, changelog and tests), as of the fix commit.
+
+
+[distribution]
+mode = "pinned public reconstruction recipe; source and gold fetched only on explicit prepare"
