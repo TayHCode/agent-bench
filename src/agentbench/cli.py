@@ -5,13 +5,14 @@ import tempfile
 from pathlib import Path
 
 from .backfill import backfill
-from .report import load_runs, display_html, display_markdown
+from .report import load_runs, display_html, display_markdown, recorded_reports
 from . import checkfiles, contestants, doctor, fromcommit, guided
 from .prepare import PrepareError, prepare_task
 from .cost import load_prices, usd
 from .plan import TYPICAL, PlanError, confirm, make_plan, display_plan
 from .runner import CONTESTANTS, PROFILES, STUBS, TaskNotReady, profile_caps, run
 from .tasks import DEFAULT_TASKS, agentbench_home, load_task, user_tasks_dir, verify_task
+from .stream import CapError, validate_caps
 
 
 def cheapest_first(ids, defs=None, prices=None):
@@ -45,6 +46,7 @@ def run_matrix(task, contestants, out, tasks_dir, ledger_cap, runner_run=run, pr
     (problem_of: the check fails on the known fix, or passes on the unfixed start). Otherwise everyone runs.
     task: one task id or a list; contestants: 'all', a comma list or a list; defs/prices: your own contestants.toml.
     """
+    validate_caps({"ledger_cap": ledger_cap})
     tasks = [task] if isinstance(task, str) else list(task)
     if isinstance(contestants, str):
         ids = sorted(defs or CONTESTANTS, key=lambda i: profile_caps(i, profile, defs)["max_usd"]) if contestants == "all" else contestants.split(",")
@@ -62,7 +64,7 @@ def run_matrix(task, contestants, out, tasks_dir, ledger_cap, runner_run=run, pr
                     say(f"STOP: ${spent:.3f} spent, within 10% of the ${ledger_cap} ledger cap; not running {cid}")
                     return 2
                 left = ledger_cap - spent
-                caps = {"max_usd": min(profile_caps(cid, profile, defs)["max_usd"], round(left, 4))}
+                caps = {"max_usd": min(profile_caps(cid, profile, defs)["max_usd"], left)}
                 try:
                     rec = runner_run(t, cid, out, tasks_dir, caps, profile=profile, **extra)
                 except TaskNotReady as e:
@@ -72,6 +74,9 @@ def run_matrix(task, contestants, out, tasks_dir, ledger_cap, runner_run=run, pr
                 say(f"{t} / {cid}: {rec['status']}, passed={rec['passed']}{' (PEEKED: left out of the report)' if rec.get('peeked') else ''}, "
                       f"{rec['wall_s']}s, {rec['tokens_total']:,} tokens, "
                       f"${rec['usd_equivalent']:.4f} (ledger ${spent + rec['usd_equivalent']:.3f}/{ledger_cap})")
+                if rec.get("unpriced_models"):
+                    say("STOP: observed usage has no price; the ledger cannot account for it. Add prices before another run.")
+                    return 2
                 errors = errors + 1 if rec["status"] == "error" else 0
                 if errors >= 2:
                     say("STOP: two runs in a row ended in error")
@@ -160,6 +165,9 @@ def main(argv=None):
         return _main(argv)
     except (SystemExit, BrokenPipeError):
         raise
+    except CapError as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
     except Exception as e:
         if debug:
             raise
@@ -206,7 +214,7 @@ def _main(argv):
     r.add_argument("--max-fresh-tokens", type=int, help="cap on input + cache writes + output (cache reads not counted)")
     r.add_argument("--max-usd", type=float)
     r.add_argument("--max-minutes", type=float)
-    r.add_argument("--profile", choices=sorted(PROFILES), default="m2", help="cap profile (m3 = 400k total tokens, 20 min; m4 = 300k fresh tokens, 20 min)")
+    r.add_argument("--profile", choices=sorted(PROFILES), default="m2", help="cap profile (m3 = 400k total tokens, 20 min; m4 = 1,000k fresh tokens, 20 min)")
     v = sub.add_parser("verify", help="prove a task: unfixed start fails the check, real fix passes")
     v.add_argument("--task", required=True)
     v.add_argument("--tasks-dir")
@@ -225,9 +233,10 @@ def _main(argv):
     cf.add_argument("--max-wrong", type=int, default=0, help="wrong rows or values allowed (default 0)")
     p = sub.add_parser("report", help="markdown leaderboards and run table; --html writes the one-file results page")
     p.add_argument("--runs", nargs="+", default=["runs"], help="one or more run directories")
+    p.add_argument("--results-csv", help="rebuild this repository's M4 reports from its recorded results CSV, without raw sessions")
     p.add_argument("--html", help="write the self-contained HTML page to this file")
     p.add_argument("--md", help="also write the markdown to this file")
-    p.add_argument("--conclusion", help="text file for the Conclusion section (paragraphs separated by a blank line)")
+    p.add_argument("--conclusion", help="text file for the Conclusion section (prose, Markdown headings and pipe tables)")
     p.add_argument("--tasks-dir")
     p.add_argument("--title", default="agent-bench results", help="title of the HTML page")
     t = sub.add_parser("task", help="build your own tasks").add_subparsers(dest="task_cmd", required=True)
@@ -298,6 +307,15 @@ def _main(argv):
         print(f"{backfill(a.runs)} run record(s) updated")
         return 0
     if a.cmd == "report":
+        if a.results_csv:
+            conclusion = Path(a.conclusion).read_text() if a.conclusion else ""
+            md, html = recorded_reports(a.results_csv, conclusion)
+            if a.md:
+                Path(a.md).write_text(md)
+            if a.html:
+                Path(a.html).write_text(html)
+            sys.stdout.write(md)
+            return 0
         runs = load_runs(a.runs)
         md = display_markdown(runs, a.tasks_dir)
         if a.html:

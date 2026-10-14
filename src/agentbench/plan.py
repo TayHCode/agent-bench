@@ -8,6 +8,7 @@ run hitting its dollar cap; the ledger cap is what actually stops the spend, so 
 
 import statistics
 import sys
+import math
 
 from .cost import usd
 from .runner import CONTESTANTS, profile_caps
@@ -31,7 +32,7 @@ def expected_each(cid, c, prices, past):
 
 def make_plan(tasks, ids, defs, prices, profile, repeats, ledger_cap, past=()):
     defs = defs or CONTESTANTS
-    if ledger_cap is None or ledger_cap <= 0:
+    if ledger_cap is None or not math.isfinite(ledger_cap) or ledger_cap <= 0:
         raise PlanError("refusing to plan without --ledger-cap USD: the ledger cap is the most you are willing to spend, "
                         "and the matrix stops when recorded spend gets within 10% of it")
     missing = sorted({defs[i]["price_model"] for i in ids if defs[i]["price_model"] not in prices["models"]})
@@ -55,9 +56,9 @@ def display_plan(p):
     out = [f"Plan: {len(p['tasks'])} task(s) x {n_c} contestant(s) x {p['repeats']} repeat(s) = {p['runs']} runs, one at a time",
            "  tasks: " + ", ".join(p["tasks"])]
     for r in p["rows"]:
-        limit = r["caps"].get("max_fresh_tokens")
-        token_limit = f"{limit:,} fresh tokens" if limit else (
-            f"{r['caps']['max_tokens']:,} total tokens" if r["caps"].get("max_tokens") else "no token cap")
+        token_limit = ", ".join(f"{r['caps'][key]:,} {kind} tokens"
+                                for key, kind in (("max_fresh_tokens", "fresh"), ("max_tokens", "total"))
+                                if r["caps"].get(key)) or "no token cap"
         out.append(f"  {r['contestant']}: {r['cli']} / {r['model']}, up to ${r['cap_usd']:g}, {r['caps']['max_minutes']:g} min, "
                    f"{token_limit} per run; expected ${r['expected_each']:.3f} a run ({r['source']})")
     out += [f"Dollar-equivalent at list prices ({p['prices']}); a subscription is not billed per token but uses plan limits:",

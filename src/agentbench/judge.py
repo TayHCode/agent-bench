@@ -34,6 +34,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .tasks import agentbench_home, load_task
+from .stream import validate_caps
 
 RUBRIC = {
     "approach": "Correctness of approach: does the change address the cause of the problem the prompt describes, rather than a symptom or a special case?",
@@ -291,6 +292,8 @@ def add_arguments(p):
 
 
 def main(a):
+    if a.max_usd is not None:
+        validate_caps({"max_usd": a.max_usd})
     backend = make_backend(a.judge, load_config(a.judge_file))
     runs = finished_runs(a.runs)
     if not runs:

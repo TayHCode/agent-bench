@@ -1,0 +1,11 @@
+{
+  "exclude": [".scratch/"],
+  "quickstart": [
+    {"file": "README.md", "line": 12, "argv": ["python", "-m", "pip", "install", "."]},
+    {"file": "README.md", "line": 13, "argv": ["agentbench", "doctor"]},
+    {"file": "README.md", "line": 14, "argv": ["agentbench", "demo"]}
+  ],
+  "checks": [
+    {"argv": ["python", "-m", "unittest", "discover", "-s", "tests", "-q"], "role": "tests"}
+  ]
+}

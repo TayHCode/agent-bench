@@ -1,6 +1,6 @@
 # M3: three harder tasks and the seven-contestant run (2026-10-10)
 
-Results: `evidence/m3-results.html` and `evidence/m3-results.md` (pilot plus the new tasks, seven tasks), conclusion in `evidence/m3-conclusion.md`. Produced by
+Results: `evidence/m3-results.html` and `evidence/m3-results.md` (pilot plus the new tasks, seven tasks), conclusion in `evidence/m3-conclusion.md`. Originally produced by
 `agentbench report --runs runs-m2 runs --html evidence/m3-results.html --md evidence/m3-results.md --conclusion evidence/m3-conclusion.md --title "agent-bench results: pilot plus three harder tasks"`.
 Unshipped raw run records stayed under `runs/` (new), `runs-m2/` (copies of the pilot's) and `runs-probes/` (difficulty probes of dropped or superseded tasks); all ignored by git.
 
@@ -76,3 +76,5 @@ Order: probes, then Sol, Opus, Astra, the Opus + Sonnet team, the Opus + Haiku s
 4. A probe batch was queued with a loop that could not be paused, so it was stopped between runs and replaced by a small queue runner (`.scratch`, not committed); no run was lost.
 5. Selection effect: tasks were kept or replaced using Haiku and Sonnet probes, so those two are disadvantaged on the kept tasks by construction.
 6. Not done: the optional code-review/audit task (d).
+
+These archived reports received presentation repairs after generation. Their raw historical sessions are not shipped, so full regeneration is unavailable; the rounded per-run measurements remain in `results.csv`.

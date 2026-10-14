@@ -27,6 +27,8 @@ if os.path.exists(__file__ + ".json"):
         cfg = json.load(f)
 sys.stdin.read()  # the prompt
 emit({"type": "system", "subtype": "init"})
+for noise in cfg.get("json_noise", []):
+    emit(noise)
 fix = cfg.get("fix_dir")
 if fix:
     shutil.copytree(fix, ".", dirs_exist_ok=True)
@@ -39,5 +41,6 @@ n = int(cfg.get("tokens", 1000))
 model = cfg.get("model", "claude-haiku-5-5")
 emit({"type": "assistant", "message": {"id": "m1", "model": model, "content": [{"type": "text", "text": "done"}],
       "usage": {"input_tokens": 10, "cache_creation_input_tokens": n, "cache_read_input_tokens": 0, "output_tokens": 50}}})
+time.sleep(float(cfg.get("sleep_after_usage", 0)))
 emit({"type": "result", "subtype": "success", "is_error": False, "duration_ms": 10, "duration_api_ms": 5, "total_cost_usd": 0.0,
       "modelUsage": {model: {"inputTokens": 10, "cacheCreationInputTokens": n, "cacheReadInputTokens": 0, "outputTokens": 50}}})

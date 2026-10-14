@@ -16,15 +16,16 @@ import json, shutil, sys, time
 mode = "{mode}"
 def emit(o): print(json.dumps(o), flush=True)
 emit({{"type": "system", "subtype": "init"}})
-if mode == "fix":
+if mode in ("fix", "budget"):
     shutil.copy("{gold}", "stats.py")
 if mode == "slow":
     time.sleep(60)
-n = 900_000 if mode == "runaway" else 1_000
+n = 1_100_000 if mode == "runaway" else 1_000
 reads = 900_000 if mode == "cachey" else 0  # lots of cache reads, almost nothing fresh
 emit({{"type": "assistant", "message": {{"id": "m1", "model": "claude-haiku-5-5", "usage": {{
     "input_tokens": 10, "cache_creation_input_tokens": n, "cache_read_input_tokens": reads, "output_tokens": 50}}}}}})
-emit({{"type": "result", "subtype": "success", "is_error": False, "duration_ms": 1234, "duration_api_ms": 900,
+emit({{"type": "result", "subtype": "error_max_budget_usd" if mode == "budget" else "success",
+    "is_error": mode == "budget", "duration_ms": 1234, "duration_api_ms": 900,
     "total_cost_usd": 0.0003, "modelUsage": {{"claude-haiku-5-5": {{"inputTokens": 10,
     "cacheCreationInputTokens": 1000, "cacheReadInputTokens": 0, "outputTokens": 50}}}}}})
 '''
@@ -178,6 +179,17 @@ class RunnerTest(unittest.TestCase):
         self.assertIn("tokens", r["cap_reason"])
         self.assertFalse(r["passed"])
 
+    def test_cli_budget_stop_is_capped_even_below_the_local_meter_limit(self):
+        r = self.go("budget", max_usd=1)
+        self.assertLess(r["usd_equivalent"], r["caps"]["max_usd"])
+        self.assertEqual(r["status"], "capped")
+        self.assertEqual(r["cap_reason"], "CLI dollar budget exhausted ($1)")
+        self.assertFalse(r["passed"])
+        self.assertTrue(r["check_passed_even_if_capped"])
+        saved = json.loads(next((Path(self.tmp) / "runs").glob("*/run.json")).read_text())
+        self.assertEqual(saved["status"], "capped")
+        self.assertEqual(report.finished_or_capped(saved), "capped: CLI dollar budget exhausted ($1)")
+
 
 class FreshCapTest(unittest.TestCase):
     """M4: the token cap counts fresh tokens (input + cache writes + output), never cache reads."""
@@ -215,7 +227,7 @@ class FreshCapTest(unittest.TestCase):
                       "astra-6@codex": 1.32, "opus+sonnet-team@claude-code": 0.85, "opus+haiku-swarm@claude-code": 0.62}
         for cid, usd in want.items():
             c = runner.profile_caps(cid, "m4")
-            self.assertEqual((c["max_fresh_tokens"], c["max_minutes"], c["max_usd"], c["max_tokens"]), (300_000, 20, usd, None), cid)
+            self.assertEqual((c["max_fresh_tokens"], c["max_minutes"], c["max_usd"], c["max_tokens"]), (1_000_000, 20, usd, None), cid)
             self.assertGreaterEqual(usd, 2 * m3_dearest[cid], cid)  # at least 2x the dearest M3 run of that contestant
         self.assertIsNone(runner.profile_caps("opus-5-5@claude-code", "m3")["max_fresh_tokens"])
 
@@ -230,7 +242,7 @@ class FreshCapTest(unittest.TestCase):
         self.assertIn("tokens", old["cap_reason"])
 
     def test_fresh_runaway_is_killed_by_the_fresh_cap(self):
-        r = self.go("runaway")
+        r = self.go("runaway", max_usd=2)
         self.assertEqual(r["status"], "capped")
         self.assertIn("fresh tokens", r["cap_reason"])
         self.assertFalse(r["passed"])
@@ -438,9 +450,9 @@ class ReportTest(unittest.TestCase):
                       "subagents": {"spawned": 11}, "status": "capped", "cap_reason": "tokens 9 > 5",
                       "caps": {"max_usd": 0.7}}
         out = report.display([run, team])
-        self.assertIn("| median-bug | opus-5-5@claude-code | m2: no token cap, $0.75 | pass | 41 | 12,345 |  | $0.0123 |  | medium (medium) | no |", out)
+        self.assertIn("| median-bug | opus-5-5@claude-code | m2: no token cap, $0.75 | pass | 41 | 12,345 |  | $0.0123 |  | medium (medium) | finished |", out)
         # two contestants on the same model are told apart, and a team shows how many workers ran
-        self.assertIn("| opus+haiku-swarm@claude-code | m2: no token cap, $0.7 | capped | 41 | 12,345 |  | $0.0123 | 11 | medium (medium) | yes: tokens 9 > 5 |", out)
+        self.assertIn("| opus+haiku-swarm@claude-code | m2: no token cap, $0.7 | capped | 41 | 12,345 |  | $0.0123 | 11 | medium (medium) | capped: tokens 9 > 5 |", out)
         self.assertEqual(report.display([]), "No runs found.\n")
 
 
@@ -460,11 +472,19 @@ class CompareProfilesTest(unittest.TestCase):
         m4 = {"max_fresh_tokens": 300_000, "max_minutes": 20, "max_usd": 3}
         runs = [synth(t, c, caps=m3, started="a") for t in ("t1", "t2", "t3") for c in ("a@x", "b@x", "c@x", "d@x")]
         runs += [synth(t, c, caps=m4, started="b", cap_profile="m4") for t in ("t1", "t2", "t3") for c in ("a@x", "b@x", "c@x")]
+        m4_1m = {"max_fresh_tokens": 1_000_000, "max_minutes": 20, "max_usd": 1.5}
+        runs += [synth("t1", "a@x", caps=m4_1m, started="c", cap_profile="m4")]
         rows = report.compare_m3_m4(runs)
         self.assertEqual({t for t, *_ in rows}, {"t1", "t2", "t3"})
-        self.assertEqual([r[2] for r in rows if r[:2] == ("t1", "d@x")], ["m3", "m4"])
-        self.assertIsNone([r[3] for r in rows if r[:3] == ("t1", "d@x", "m4")][0])
-        self.assertIn("| t1 | d@x | m4 | not run |", report.display_markdown(runs))
+        self.assertEqual([r[2] for r in rows if r[:2] == ("t1", "d@x")], ["m3", "m4-300k", "m4-1000k"])
+        self.assertIsNone([r[3] for r in rows if r[:3] == ("t1", "d@x", "m4-300k")][0])
+        self.assertIsNone([r[3] for r in rows if r[:3] == ("t1", "d@x", "m4-1000k")][0])
+        md = report.display_markdown(runs)
+        self.assertIn("| t1 | d@x | m4-300k | not run |  |  |  |  |  | not run |", md)
+        self.assertIn("| t1 | d@x | m4-1000k | not run |  |  |  |  |  | not run |", md)
+        groups = report.leaderboard_groups(runs)
+        self.assertEqual([title.split(":", 1)[0] for title, _ in groups[:2]], ["M4 rerun", "M4 rerun"])
+        self.assertEqual([len(group) for _, group in groups[:2]], [9, 1])
         self.assertEqual(report.compare_m3_m4([synth("t1", "a@x", caps=m3)]), [])
 
 
@@ -559,16 +579,27 @@ class ReportPageTest(unittest.TestCase):
     def test_cap_profile_is_read_from_caps_and_runs_under_different_caps_are_separate_cells(self):
         m3 = synth("t", "c@x", started="a", caps={"max_tokens": 400_000, "max_minutes": 20, "max_usd": 1.5})
         m4 = synth("t", "c@x", started="b", cap_profile="m4", tokens_fresh=50_000,
-                   caps={"max_tokens": None, "max_fresh_tokens": 300_000, "max_minutes": 20, "max_usd": 3.0})
+                   caps={"max_tokens": None, "max_fresh_tokens": 1_000_000, "max_minutes": 20, "max_usd": 3.0})
         pilot = synth("t", "c@x", started="c", caps={"max_tokens": 150_000, "max_minutes": 10, "max_usd": 0.75})
-        self.assertEqual([report.profile_name(r) for r in (m3, m4, pilot)], ["m3", "m4", "m2"])
+        self.assertEqual([report.profile_name(r) for r in (m3, m4, pilot)], ["m3", "m4-1000k", "m2"])
         self.assertEqual(report.profile_desc(m3), "m3: 400k total tokens, 20 min, $1.5")
-        self.assertEqual(report.profile_desc(m4), "m4: 300k fresh tokens, 20 min, $3")
+        self.assertEqual(report.profile_desc(m4), "m4: 1000k fresh tokens, 20 min, $3")
         self.assertEqual(len(report.cells([m3, m4, pilot])), 3)
         md = report.display_markdown([m3, m4, pilot])
         self.assertIn("## Leaderboard, M4 rerun", md)
         self.assertIn("## Leaderboard, Pilot and M3", md)
-        self.assertIn("m4: 300k fresh tokens, 20 min, $3 |", md)
+        self.assertIn("m4: 1000k fresh tokens, 20 min, $3 |", md)
+        self.assertIn("Finished or capped", md)
+        self.assertIn("Finished or capped", report.display_html([m3, m4, pilot]))
+
+    def test_run_table_marks_finished_and_capped_rows(self):
+        finished = synth("t", "c@x", started="a", status="ok", passed=False, cap_reason=None)
+        capped = synth("t", "d@x", started="b", status="capped", passed=False,
+                       cap_reason="fresh tokens 1000001 > 1000000")
+        md = report.display([finished, capped])
+        self.assertIn("| Finished or capped |", md)
+        self.assertIn("| finished |", md)
+        self.assertIn("| capped: fresh tokens 1000001 > 1000000 |", md)
 
     def test_fresh_tokens_from_record_or_per_model_split(self):
         split = {"claude-haiku-5-5": {"input": 10, "cache_write": 100, "cache_write_5m": 5, "cache_read": 9_000, "output": 20}}

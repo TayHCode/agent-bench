@@ -31,8 +31,19 @@ ANSI = re.compile(r"\x1b\[[0-9;]*m")
 def load_runs(runs_dir="runs"):
     """Every run.json under one directory, or under several (a list of directories)."""
     dirs = [runs_dir] if isinstance(runs_dir, (str, Path)) else list(runs_dir)
-    runs = [json.loads(p.read_text()) | ({"judge": json.loads((p.parent / "judge.json").read_text())} if (p.parent / "judge.json").is_file() else {})
-            for d in dirs for p in sorted(Path(d).glob("*/run.json"))]
+    runs = []
+    for directory in dirs:
+        for path in sorted(Path(directory).glob("*/run.json")):
+            try:
+                record = json.loads(path.read_text())
+                if not isinstance(record, dict) or not record:
+                    raise ValueError("expected a nonempty run object")
+                judge = path.parent / "judge.json"
+                if judge.is_file():
+                    record["judge"] = json.loads(judge.read_text())
+            except (ValueError, OSError) as error:
+                raise ValueError(f"invalid run record in {path.parent.name}/run.json: {error}") from None
+            runs.append(record)
     return runs
 
 
@@ -40,10 +51,31 @@ def label(cid):
     return LABELS.get(cid, cid)
 
 
+def token_limit_label(limit):
+    return f"{limit / 1000:g}k" if limit >= 1000 else f"{limit:g}tokens"
+
+
+def profile_sort_key(profile):
+    match = re.search(r"m4-([0-9.]+)(k|tokens)", profile)
+    return float(match[1]) * (1000 if match[2] == "k" else 1) if match else 0
+
+
+def finished_or_capped(r):
+    if r.get("status") == "capped":
+        reason = r.get("cap_reason")
+        return "capped" + (f": {reason}" if reason else ": reason unavailable")
+    return "finished" if r.get("status") == "ok" else str(r.get("status") or "unknown")
+
+
 def profile_name(r):
     """Cap profile of a run: recorded since M4, otherwise read off its caps (m3: 400k total tokens and 20 min)."""
     if r.get("cap_profile"):
-        return r["cap_profile"]
+        name = r["cap_profile"]
+        # M4's fresh-token limit changed from 300k to 1M. Keep those measurements in
+        # separate cells and leaderboards even though both were launched as profile m4.
+        if name == "m4" and r.get("caps", {}).get("max_fresh_tokens"):
+            return "m4-" + token_limit_label(r["caps"]["max_fresh_tokens"])
+        return name
     caps = r.get("caps") or {}
     if caps.get("max_fresh_tokens"):
         return "m4"
@@ -51,13 +83,16 @@ def profile_name(r):
 
 
 def profile_desc(r):
-    """The caps a run was held to, e.g. 'm4: 300k fresh tokens, 20 min, $3'."""
+    """The caps a run was held to, e.g. 'm4: 1000k fresh tokens, 20 min, $3'."""
     caps = r.get("caps") or {}
-    toks = (f"{caps['max_fresh_tokens'] // 1000}k fresh tokens" if caps.get("max_fresh_tokens")
-            else f"{caps['max_tokens'] // 1000}k total tokens" if caps.get("max_tokens") else "no token cap")
+    toks = ", ".join(f"{token_limit_label(caps[key]).removesuffix('tokens')} {kind} tokens"
+                     for key, kind in (("max_fresh_tokens", "fresh"), ("max_tokens", "total")) if caps.get(key)) or "no token cap"
     mins = f", {caps['max_minutes']:g} min" if caps.get("max_minutes") else ""
     usd = f", ${caps['max_usd']:g}" if caps.get("max_usd") else ""
-    return f"{profile_name(r)}: {toks}{mins}{usd}"
+    name = profile_name(r)
+    if name.startswith("m4-"):
+        name = "m4"
+    return f"{name}: {toks}{mins}{usd}"
 
 
 def fresh_tokens(r):
@@ -79,18 +114,18 @@ def _workers(r):
 
 
 def _result(r):
-    return "capped" if r["status"] == "capped" else "pass" if r["passed"] else "fail"
+    return "error" if r["status"] not in ("ok", "capped") else "capped" if r["status"] == "capped" else "pass" if r["passed"] else "fail"
 
 
 def display(runs):
     """Every run, one row each."""
     if not runs:
         return "No runs found.\n"
-    rows = ["| Task | Contestant | Cap profile | Result | Wall s | Total tokens | Fresh tokens | $ equiv | Workers | Effort (seen) | Capped |",
+    rows = ["| Task | Contestant | Cap profile | Result | Wall s | Total tokens | Fresh tokens | $ equiv | Workers | Effort (seen) | Finished or capped |",
             "|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in sorted(runs, key=lambda r: (r["task"], r["caps"]["max_usd"] if r.get("caps") else 0, r["started"])):
         seen = ",".join(r.get("effort_seen_in_session", [])) or "?"
-        capped = f"yes: {r['cap_reason']}" if r["cap_reason"] else "no"
+        capped = finished_or_capped(r)
         rows.append(f"| {r['task']} | {r['contestant']} | {profile_desc(r)} | {_result(r)} | {r['wall_s']:.0f} | {r['tokens_total']:,} "
                     f"| {_fresh_cell(fresh_tokens(r))} | ${r['usd_equivalent']:.4f} | {_workers(r)} | {r['effort']} ({seen}) | {capped} |")
     total = sum(r["usd_equivalent"] for r in runs)
@@ -135,8 +170,15 @@ def cells(runs):
     return out
 
 
+def outcome_summary(rs):
+    finished = sum(r.get("status") == "ok" for r in rs)
+    capped = sum(r.get("status") == "capped" for r in rs)
+    errors = len(rs) - finished - capped
+    return f"{finished} finished / {capped} capped" + (f" / {errors} error" if errors else "")
+
+
 def cell_stats(rs):
-    return {"n": len(rs), "passed": sum(1 for r in rs if r["passed"]),
+    return {"outcomes": outcome_summary(rs), "n": len(rs), "passed": sum(1 for r in rs if r["passed"]),
             "check_ok": sum(1 for r in rs if r.get("check_passed_even_if_capped", r["passed"])),
             "capped": sum(1 for r in rs if r["status"] == "capped"),
             "usd": _mean(r["usd_equivalent"] for r in rs), "usd_min": min(r["usd_equivalent"] for r in rs),
@@ -159,7 +201,7 @@ def standings(runs):
         task_cells = {}
         for r in rs:
             task_cells.setdefault(r["task"], []).append(r["passed"])
-        rows.append({"contestant": cid, "runs": len(rs), "passed": k, "spent": spent,
+        rows.append({"outcomes": outcome_summary(rs), "contestant": cid, "runs": len(rs), "passed": k, "spent": spent,
                      "check_ok": sum(1 for r in rs if r.get("check_passed_even_if_capped", r["passed"])),
                      "per_solved": spent / k if k else None, "wall": _mean(r["wall_s"] for r in rs),
                      "tokens": _mean(r["tokens_total"] for r in rs),
@@ -173,19 +215,25 @@ def standings(runs):
 
 def leaderboard_groups(runs):
     """Runs split by cap regime so a token-capped run is never ranked against a fresh-token-capped one."""
-    fresh = [r for r in runs if profile_name(r) == "m4"]
+    fresh_profiles = sorted({profile_name(r) for r in runs if profile_name(r).startswith("m4-") or profile_name(r) == "m4"},
+                            key=profile_sort_key)
     byo = [r for r in runs if profile_name(r) == "byo"]
-    total = [r for r in runs if profile_name(r) not in ("m4", "byo")]
-    return [(t, g) for t, g in (("M4 rerun: cap on fresh tokens (300k), dollars and minutes", fresh),
-                                ("Your runs: cap on fresh tokens, dollars and minutes (see the Cap profile column)", byo),
-                                ("Pilot and M3: cap on total tokens (cache reads included), dollars and minutes", total)) if g]
+    total = [r for r in runs if not (profile_name(r).startswith("m4-") or profile_name(r) in ("m4", "byo"))]
+    groups = []
+    for profile in fresh_profiles:
+        limit = profile.removeprefix("m4-")
+        title = f"M4 rerun: {limit} fresh-token cap, dollars and minutes (limits shown per run)"
+        groups.append((title, [r for r in runs if profile_name(r) == profile]))
+    groups.extend((("Your runs: cap on fresh tokens, dollars and minutes (see the Cap profile column)", byo),
+                   ("Pilot and M3: token caps, dollars and minutes (see the Cap profile column)", total)))
+    return [(title, group) for title, group in groups if group]
 
 
 def task_standings(runs, task):
     rows = []
     for (t, cid, prof), rs in cells(runs).items():
         if t == task:
-            rows.append({"contestant": cid, "profile": prof} | cell_stats(rs))
+            rows.append({"outcomes": outcome_summary(rs), "contestant": cid, "profile": prof} | cell_stats(rs))
     rows.sort(key=lambda x: (x["profile"], -x["passed"] / x["n"], x["usd"], x["wall"]))
     return rows
 
@@ -228,7 +276,7 @@ def failure_note(r):
     edited = f"{n} file{'s' if n != 1 else ''} edited (+{r['diff']['lines_added']}/-{r['diff']['lines_removed']})"
     check = "passed" if r.get("check_passed_even_if_capped") else "failed"
     if r["status"] == "capped":
-        return (f"killed at the cap ({r['cap_reason']}); {edited}; the hidden check {check} on the work left behind"
+        return (f"killed at the cap ({r.get('cap_reason') or 'reason unavailable'}); {edited}; the hidden check {check} on the work left behind"
                 + ("" if r.get("check_passed_even_if_capped") else f": {_fail_line(r.get('check_output_tail'))}"))
     if r["status"] == "error":
         return f"the CLI ended in error; {edited}; hidden check {check}"
@@ -321,29 +369,32 @@ def _money(x):
     return "n/a" if x is None else f"${x:.2f}" if x >= 0.1 else f"${x:.3f}"
 
 
-CMP_HEAD = ["Task", "Contestant", "Cap profile", "Result", "Work passes check", "$", "Wall s", "Fresh tokens", "Total tokens"]
+CMP_HEAD = ["Task", "Contestant", "Cap profile", "Result", "Work passes check", "$", "Wall s", "Fresh tokens", "Total tokens", "Finished or capped"]
 
 
 def compare_m3_m4(runs):
-    """Rows (task, contestant, profile, run or None) for every task the M4 matrix covered: the M3 run beside the M4 run.
-    A missing M4 cell is a row with run None, so unrun cells are visible."""
+    """Rows for every task with at least three M4-profile cells, keeping fresh-token limits distinct."""
     by = {(t, cid, prof): rs[-1] for (t, cid, prof), rs in cells(runs).items()}
     m4_count = {}
     for (t, _, prof) in by:
-        if prof == "m4":
+        if prof == "m4" or prof.startswith("m4-"):
             m4_count[t] = m4_count.get(t, 0) + 1
     tasks = sorted(t for t, n in m4_count.items() if n >= 3)  # tasks the M4 matrix really covered, not a stray cell
-    cids = sorted({cid for (_, cid, prof) in by if prof == "m4"} | {cid for (t, cid, prof) in by if prof == "m3" and t in tasks},
+    m4_profiles = sorted({prof for (_, _, prof) in by if prof == "m4" or prof.startswith("m4-")},
+                         key=profile_sort_key)
+    cids = sorted({cid for (_, cid, prof) in by if prof in m4_profiles} | {cid for (t, cid, prof) in by if prof == "m3" and t in tasks},
                   key=lambda c: label(c))
-    return [(t, cid, prof, by.get((t, cid, prof))) for t in tasks for cid in cids for prof in ("m3", "m4")
-            if (t, cid, "m3") in by or (t, cid, "m4") in by]
+    profiles = ["m3", *m4_profiles]
+    return [(t, cid, prof, by.get((t, cid, prof))) for t in tasks for cid in cids for prof in profiles
+            if (t, cid, "m3") in by or (t, cid, prof) in by or (prof.startswith("m4-") and t in m4_count)]
 
 
 def _cmp_cells(r):
     if r is None:
-        return ["not run", "", "", "", "", ""]
+        return ["not run", "", "", "", "", "", "not run"]
     return [_result(r), "yes" if r.get("check_passed_even_if_capped", r["passed"]) else "no", _money(r["usd_equivalent"]),
-            f'{r["wall_s"]:.0f}', _fresh_cell(fresh_tokens(r)), f'{r["tokens_total"]:,}']
+            f'{r["wall_s"]:.0f}', _fresh_cell(fresh_tokens(r)), f'{r["tokens_total"]:,}',
+            finished_or_capped(r)]
 
 
 def display_markdown(runs, tasks_dir=None):
@@ -362,26 +413,26 @@ def display_markdown(runs, tasks_dir=None):
     qh, qs, qc = (" Quality (judge, secondary)* |", "---|", lambda s: f" {_q(s['quality'])} |") if jq else ("", "", lambda s: "")
     for title, group in leaderboard_groups(runs):
         out += [f"## Leaderboard, {title}", "",
-                "| # | Contestant | Passed | Work passes the check | $ spent | $ per solved run | Mean wall s | Mean total tokens | Mean fresh tokens | Max workers | Capped |" + qh,
-                "|---|---|---|---|---|---|---|---|---|---|---|" + qs]
+                "| # | Contestant | Passed | Work passes the check | $ spent | $ per solved run | Mean wall s | Mean total tokens | Mean fresh tokens | Max workers | Capped | Finished or capped |" + qh,
+                "|---|---|---|---|---|---|---|---|---|---|---|---|" + qs]
         for i, s in enumerate(standings(group), 1):
             out.append(f"| {i} | {label(s['contestant'])} | {s['passed']}/{s['runs']} | {s['check_ok']}/{s['runs']} | {_money(s['spent'])} | {_money(s['per_solved'])} "
-                       f"| {s['wall']:.0f} | {s['tokens']:,.0f} | {_fresh_cell(s['fresh'])} | {s['workers'] or ''} | {s['capped']} |" + qc(s))
+                       f"| {s['wall']:.0f} | {s['tokens']:,.0f} | {_fresh_cell(s['fresh'])} | {s['workers'] or ''} | {s['capped']} | {s['outcomes']} |" + qc(s))
         out.append("")
     cmp_rows = compare_m3_m4(runs)
     if cmp_rows:
-        out += ["## M3 against M4 (same tasks, two cap profiles)", "",
-                "m3 = cap of 400k total tokens (cache reads included); m4 = cap of 300k fresh tokens (input, cache writes, output). One run per cell. "
-                "\"not run\" = the cell was not run (spend ledger stopped the matrix).", "",
+        out += ["## M3 against M4 (same tasks, separate cap profiles)", "",
+                "m3 = cap of 400k total tokens (cache reads included); historical m4 rows used 300k fresh tokens and the completion cells used 1,000,000. "
+                "Each cap profile is listed separately; \"not run\" means that task/contestant was not run under that exact profile.", "",
                 "| " + " | ".join(CMP_HEAD) + " |", "|" + "---|" * len(CMP_HEAD)]
         for t, cid, prof, r in cmp_rows:
             out.append("| " + " | ".join([t, label(cid), prof] + _cmp_cells(r)) + " |")
         out.append("")
     for t in tasks:
-        out += [f"## {t}", "", "| Contestant | Cap profile | Passed | Work passes the check | Mean $ | Mean wall s | Mean total tokens | Mean fresh tokens | Workers | Capped |" + qh, "|---|---|---|---|---|---|---|---|---|---|" + qs]
+        out += [f"## {t}", "", "| Contestant | Cap profile | Passed | Work passes the check | Mean $ | Mean wall s | Mean total tokens | Mean fresh tokens | Workers | Capped | Finished or capped |" + qh, "|---|---|---|---|---|---|---|---|---|---|---|" + qs]
         for s in task_standings(runs, t):
             out.append(f"| {label(s['contestant'])} | {s['profile']} | {s['passed']}/{s['n']} | {s['check_ok']}/{s['n']} | {_money(s['usd'])} | {s['wall']:.0f} "
-                       f"| {s['tokens']:,.0f} | {_fresh_cell(s['fresh'])} | {s['workers'] or ''} | {s['capped'] or ''} |" + qc(s))
+                       f"| {s['tokens']:,.0f} | {_fresh_cell(s['fresh'])} | {s['workers'] or ''} | {s['capped'] or ''} | {s['outcomes']} |" + qc(s))
         out.append("")
     if jq:
         out += [f"\\* {judge_footnote(runs)}", ""]
@@ -439,6 +490,55 @@ def _table(head, rows, left=1, wrap_last=False):
         tds = "".join(f'<td class="{"wrap l" if wrap_last and i == len(row) - 1 else "l" if i < left else ""}">{c}</td>' for i, c in enumerate(row))
         body += f"<tr>{tds}</tr>"
     return f'<div class="scroll"><table><thead><tr>{th}</tr></thead><tbody>{body}</tbody></table></div>'
+
+
+def _conclusion_html(conclusion):
+    """Render the conclusion's prose, headings and pipe tables without trusting HTML."""
+    parts, paragraph = [], []
+    lines = [line.strip() for line in conclusion.splitlines()]
+
+    def flush():
+        if paragraph:
+            block = "\n".join(paragraph)
+            parts.append(f"<p>{escape(block)}</p>")
+            paragraph.clear()
+
+    def cells(line):
+        if line.startswith("|") and line.endswith("|"):
+            return [cell.strip().replace(r"\|", "|") for cell in re.split(r"(?<!\\)\|", line[1:-1])]
+        return None
+
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        heading = re.fullmatch(r"(#{1,6})\s+(.+)", line)
+        if heading:
+            flush()
+            level = min(len(heading[1]) + 1, 6)  # nested below the Conclusion heading
+            parts.append(f"<h{level}>{escape(heading[2])}</h{level}>")
+        else:
+            head = cells(line)
+            delimiter = cells(lines[i + 1]) if i + 1 < len(lines) else None
+            if (head and delimiter and len(head) == len(delimiter)
+                    and all(re.fullmatch(r":?-+:?", cell) for cell in delimiter)):
+                flush()
+                i += 2
+                rows = []
+                while i < len(lines):
+                    row = cells(lines[i])
+                    if row is None or len(row) != len(head):
+                        break
+                    rows.append([escape(cell) for cell in row])
+                    i += 1
+                parts.append(_table([escape(cell) for cell in head], rows, left=2))
+                continue
+            if line:
+                paragraph.append(line)
+            else:
+                flush()
+        i += 1
+    flush()
+    return "".join(parts)
 
 
 def _pass_cell(k, n):
@@ -515,7 +615,7 @@ METHOD = [
     "<b>The unit is model + CLI, not the model alone.</b> “Opus 5.5 · Claude Code” and “Astra 6 · Codex” each bundle a model with that vendor’s own agent harness, prompts and tools. A difference here can come from either half and this design cannot separate them.",
     "<b>Small sample.</b> {n_tasks} tasks, and {reps} per cell (the n shown in each table). A pass rate of 1/1 or 2/2 says the run worked, not that the contestant is reliable. No significance tests were run and none would be meaningful at this size.",
     "<b>Settings held equal:</b> reasoning effort <code>medium</code> for every contestant (read back from each run’s own session files), connectors and user settings off, a clean HOME per run, the same prompt text, one process at a time. Per-run caps on tokens, dollars and minutes are enforced by the runner; a run that hits one is killed and marked <i>capped</i>, and counts as not passed.",
-    "<b>Cap profiles</b> (the “Cap profile” column says which one each run used). <i>m2</i> (pilot): 150,000 total tokens and 10 minutes (400,000 and 15 for the team and swarm), per-contestant dollar caps. <i>m3</i>: 400,000 total tokens (cache reads included), 20 minutes, dollar caps about 3× the pilot’s. <i>m4</i>: 300,000 fresh tokens (input + cache writes + output, cache reads not counted), no cap on total tokens, 20 minutes, and dollar caps at least 2× the dearest m3 run of the same contestant. Runs under different profiles are never pooled into one cell or one leaderboard, because a token cap on total tokens mostly measured cache reads.",
+    "<b>Cap profiles</b> (the “Cap profile” column says which one each run used). <i>m2</i> (pilot): 150,000 total tokens and 10 minutes (400,000 and 15 for the team and swarm), per-contestant dollar caps. <i>m3</i>: 400,000 total tokens (cache reads included), 20 minutes, dollar caps about 3× the pilot’s. Historical <i>m4</i> rows used a 300,000 fresh-token cap; the current default is 1,000,000 fresh tokens. Fresh tokens are input + cache writes + output, without cache reads; total tokens are still recorded. Dollar caps are per contestant. Runs under different profiles are never pooled into one cell or one leaderboard, because a token cap on total tokens mostly measured cache reads.",
     "<b>Pass</b> means the run finished without hitting a cap and the hidden check passed. The hidden check is the upstream test file or cases (or, for a data task, a known-answer file) copied in only after the run; each task\u2019s own manifest says exactly what it checks and what it forgives. Capped runs whose work would have passed are flagged in the failures list.",
     "<b>Dollars are dollar-equivalents.</b> Every run used the owner’s Claude and Codex subscription logins, so no cash was billed per token. The figure is the recorded tokens × the versioned public list prices (table dated {prices}); it is not an invoice, and plan limits were the real cost.",
     "<b>Tokens</b> are summed over every model call in the session files, sub-agents included. <i>Total</i> includes cache reads, which are most of the total for every contestant and are billed at a small fraction of fresh input; <i>fresh</i> is input + cache writes + output. Neither is comparable between Claude Code and Codex, because the two harnesses cache and count differently.",
@@ -541,7 +641,7 @@ def display_html(runs, tasks_dir=None, conclusion="", title="agent-bench results
     h = [f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
          f'<title>{escape(title)}</title><style>{CSS}</style></head><body><main>',
          f'<h1>{escape(title)}</h1>',
-         f'<p class="sub">{len({r["contestant"] for r in runs})} coding-agent setups (model + CLI) on {len(tasks)} checkable tasks. Private; dollar figures are '
+         f'<p class="sub">{len({r["contestant"] for r in runs})} coding-agent setups (model + CLI) on {len(tasks)} checkable tasks. Dollar figures are '
          f'dollar-equivalents at list price ({escape(prices)} table) from subscription runs. Read “Methodology and limits” before quoting any number.</p>',
          f'<div class="tiles"><div class="tile"><b>{len(runs)}</b><span>runs recorded</span></div>'
          f'<div class="tile"><b>{n_pass}</b><span>passed the hidden check</span></div>'
@@ -559,7 +659,7 @@ def display_html(runs, tasks_dir=None, conclusion="", title="agent-bench results
                          for r in peeked], left=3))
 
     h.append("<h2>Conclusion</h2>")
-    h.append("".join(f"<p>{escape(p.strip())}</p>" for p in conclusion.strip().split("\n\n") if p.strip())
+    h.append(_conclusion_html(conclusion)
              or "<p class='note'>No conclusion text supplied.</p>")
 
     h.append("<h2>Leaderboards</h2>")
@@ -567,18 +667,18 @@ def display_html(runs, tasks_dir=None, conclusion="", title="agent-bench results
     QH, QC = (["Quality (judge, secondary)*"], lambda s: [_q(s["quality"])]) if has_judge(runs) else ([], lambda s: [])
     for gtitle, group in leaderboard_groups(runs):
         h.append(f"<h3>{escape(gtitle)}</h3>")
-        h.append(_table(["#", "Contestant", "Passed", "Work passes check", "Tasks all-pass", "$ spent", "$ per solved run", "Mean wall s", "Mean total tokens", "Mean fresh tokens", "Workers", "Capped"] + QH,
+        h.append(_table(["#", "Contestant", "Passed", "Work passes check", "Tasks all-pass", "$ spent", "$ per solved run", "Mean wall s", "Mean total tokens", "Mean fresh tokens", "Workers", "Capped", "Finished or capped"] + QH,
                         [[str(i), escape(label(s["contestant"])), _pass_cell(s["passed"], s["runs"]), f'{s["check_ok"]}/{s["runs"]}', f'{s["tasks_all_pass"]}/{s["tasks"]}',
                           _money(s["spent"]), _money(s["per_solved"]), f'{s["wall"]:.0f}', f'{s["tokens"]:,.0f}', _fresh_cell(s["fresh"]),
-                          str(s["workers"] or ""), str(s["capped"] or "")] + QC(s) for i, s in enumerate(standings(group), 1)], left=2))
+                          escape(str(s["workers"] or "")), str(s["capped"] or ""), escape(s["outcomes"])] + QC(s) for i, s in enumerate(standings(group), 1)], left=2))
 
     if has_judge(runs):
         h.append(f'<p class="note">* {escape(judge_footnote(runs))}</p>')
     cmp_rows = compare_m3_m4(runs)
     if cmp_rows:
         h.append("<h2>M3 against M4</h2>")
-        h.append('<p class="note">The same task and contestant under the two cap profiles. <b>m3</b> = cap of 400k <i>total</i> tokens (cache reads included). <b>m4</b> = cap of 300k <i>fresh</i> tokens (input, cache writes, output). One run per cell. “not run” = the cell was not run because the spend ledger stopped the matrix at 90% of the cap.</p>')
-        h.append(_table(CMP_HEAD, [[escape(t), escape(label(cid)), prof] + [f'<span class="{"pass" if c == "pass" else "fail" if c in ("fail", "capped") else ""}">{c}</span>' if i == 0 else c
+        h.append('<p class="note">The same task and contestant under separate cap profiles. <b>m3</b> = cap of 400k <i>total</i> tokens (cache reads included); historical <b>m4</b> rows used 300k fresh tokens and completion cells used 1,000,000. Each profile is listed separately.</p>')
+        h.append(_table(CMP_HEAD, [[escape(t), escape(label(cid)), prof] + [f'<span class="{"pass" if c == "pass" else "fail" if c in ("fail", "capped") else ""}">{escape(c)}</span>' if i == 0 else escape(c)
                                                                           for i, c in enumerate(_cmp_cells(r))] for t, cid, prof, r in cmp_rows], left=3))
 
     h.append("<h2>Cost against outcome</h2>")
@@ -595,11 +695,11 @@ def display_html(runs, tasks_dir=None, conclusion="", title="agent-bench results
         i = info[t]
         h.append(f"<h3>{escape(t)}</h3><p class='note'>{escape(i['title'])}"
                  + (f' · <a href="{escape(i["source"])}">source</a>' if i["source"].startswith("http") else "") + "</p>")
-        h.append(_table(["Contestant", "Cap profile", "Passed", "Work passes check", "Mean $", "$ range", "Mean wall s", "Wall range", "Mean total tokens", "Mean fresh tokens", "Workers", "Capped"] + QH,
+        h.append(_table(["Contestant", "Cap profile", "Passed", "Work passes check", "Mean $", "$ range", "Mean wall s", "Wall range", "Mean total tokens", "Mean fresh tokens", "Workers", "Capped", "Finished or capped"] + QH,
                         [[escape(label(s["contestant"])), escape(s["profile"]), _pass_cell(s["passed"], s["n"]), f'{s["check_ok"]}/{s["n"]}', _money(s["usd"]),
                           _range(s["usd_min"], s["usd_max"], _money) if s["n"] > 1 else "",
                           f'{s["wall"]:.0f}', _range(s["wall_min"], s["wall_max"], lambda v: f"{v:.0f}") if s["n"] > 1 else "",
-                          f'{s["tokens"]:,.0f}', _fresh_cell(s["fresh"]), str(s["workers"] or ""), str(s["capped"] or "")] + QC(s) for s in task_standings(runs, t)]))
+                          f'{s["tokens"]:,.0f}', _fresh_cell(s["fresh"]), escape(str(s["workers"] or "")), str(s["capped"] or ""), escape(s["outcomes"])] + QC(s) for s in task_standings(runs, t)]))
 
     notes = spread_notes(runs)
     h.append("<h2>Variance between repeats</h2>")
@@ -613,8 +713,8 @@ def display_html(runs, tasks_dir=None, conclusion="", title="agent-bench results
     h.append("<h2>Failed and capped runs</h2>")
     bad = failures(runs)
     if bad:
-        h.append(_table(["Task", "Contestant", "Cap profile", "Result", "What the output looked like"],
-                        [[escape(r["task"]), escape(label(r["contestant"])), escape(profile_name(r)), f'<span class="fail">{_result(r)}</span>', escape(failure_note(r))]
+        h.append(_table(["Task", "Contestant", "Cap profile", "Result", "Finished or capped", "What the output looked like"],
+                        [[escape(r["task"]), escape(label(r["contestant"])), escape(profile_name(r)), f'<span class="fail">{_result(r)}</span>', escape(finished_or_capped(r)), escape(failure_note(r))]
                          for r in bad], left=3, wrap_last=True))
     else:
         h.append("<p>None.</p>")
@@ -633,10 +733,10 @@ def display_html(runs, tasks_dir=None, conclusion="", title="agent-bench results
     h.append(_table(["Task", "Contestant", "Cap profile", "Run lines", "Fix lines", "Ratio", "Fix files touched", "Verdict"], rows, left=3) if rows else "<p>No passing runs with a comparable fix.</p>")
 
     h.append("<h2>All runs</h2>")
-    h.append(_table(["Task", "Contestant", "Cap profile", "Result", "Wall s", "Total tokens", "Fresh tokens", "$ equiv", "Workers", "Effort seen", "Capped"],
+    h.append(_table(["Task", "Contestant", "Cap profile", "Result", "Wall s", "Total tokens", "Fresh tokens", "$ equiv", "Workers", "Effort seen", "Capped", "Finished or capped"],
                     [[escape(r["task"]), escape(label(r["contestant"])), escape(profile_desc(r)), f'<span class="{"pass" if r["passed"] else "fail"}">{_result(r)}</span>',
-                      f'{r["wall_s"]:.0f}', f'{r["tokens_total"]:,}', _fresh_cell(fresh_tokens(r)), f'${r["usd_equivalent"]:.4f}', str(_workers(r)),
-                      escape(",".join(r.get("effort_seen_in_session", [])) or "?"), escape(r["cap_reason"] or "no")]
+                      f'{r["wall_s"]:.0f}', f'{r["tokens_total"]:,}', _fresh_cell(fresh_tokens(r)), f'${r["usd_equivalent"]:.4f}', escape(str(_workers(r))),
+                      escape(",".join(r.get("effort_seen_in_session", [])) or "?"), escape(str(r.get("cap_reason") or "no")), escape(finished_or_capped(r))]
                      for r in sorted(runs, key=lambda r: (r["task"], r["contestant"], r["started"]))], left=3))
 
     h.append("<h2>Workflow-match check</h2>")
@@ -659,3 +759,60 @@ def display_html(runs, tasks_dir=None, conclusion="", title="agent-bench results
 
 def write_html(path, runs, tasks_dir=None, conclusion=""):
     Path(path).write_text(display_html(runs, tasks_dir, conclusion))
+
+
+def recorded_reports(csv_path, conclusion=""):
+    """Reproduce compact reports from the released, rounded measurement table.
+
+    Raw sessions are intentionally not shipped. Do not infer hidden-check outcomes
+    on capped work, per-file diffs, or timing/token precision absent from this CSV.
+    """
+    import csv
+    columns = [("task", "Task"), ("contestant", "Contestant"), ("cap_profile", "Cap profile"),
+               ("result", "Result"), ("wall_s", "Wall s"), ("total_tokens", "Total tokens"),
+               ("fresh_tokens", "Fresh tokens"), ("usd_equivalent", "$ equiv"), ("workers", "Workers"),
+               ("effort_observed", "Effort (seen)"), ("cap_reason", "Cap reason"),
+               ("finished_or_capped", "Finished or capped")]
+    with Path(csv_path).open(newline="") as stream:
+        reader = csv.DictReader(stream)
+        missing = sorted({key for key, _ in columns} - set(reader.fieldnames or []))
+        if missing:
+            raise ValueError("recorded results CSV missing required columns: " + ", ".join(missing))
+        runs = list(reader)
+    note = ("Generated from evidence/results.csv, preserving its recorded rounded measurements. "
+            "The Finished or capped column records the outcome; cap reasons appear separately in Cap reason. "
+            "M2 and M3 are cap-distorted historical rounds. Raw historical sessions are not shipped; "
+            "hidden-check outcomes on capped work and per-file diff comparisons cannot be reconstructed from this table. "
+            "The three completion cells' check outcomes and finer cost precision are recorded in evidence/m4-conclusion.md. "
+            "Dollar-equivalents are not invoices. Each M4 cell is n=1.")
+    md = ["# M4 results (including historical rounds)", "", note, ""]
+    page = ['<!doctype html><html lang="en"><head><meta charset="utf-8">',
+            f'<title>M4 results</title><style>{CSS}</style></head><body><main><h1>M4 results (including historical rounds)</h1>',
+            f'<p>{escape(note)}</p>']
+
+    def section(title, rows, cols=columns):
+        md.extend(["## " + title, "", "| " + " | ".join(label for _, label in cols) + " |",
+                   "|" + "---|" * len(cols)])
+        values = [[row.get(key, "") for key, _ in cols] for row in rows]
+        md.extend("| " + " | ".join(str(v).replace("|", "\\|").replace("\n", " ") for v in row) + " |" for row in values)
+        md.append("")
+        page.append(f"<h2>{escape(title)}</h2>" + _table([label for _, label in cols],
+                                                      [[escape(str(v)) for v in row] for row in values], left=3))
+
+    if conclusion:
+        nested = re.sub(r"^(#{1,5})(?=\s)", r"#\1", conclusion.strip(), flags=re.M)
+        md.extend(["## Conclusion", "", nested, ""])
+        page.append("<h2>Conclusion</h2>" + _conclusion_html(conclusion))
+    summary = []
+    for profile in dict.fromkeys(row["cap_profile"].split(":", 1)[0] for row in runs):
+        group = [row for row in runs if row["cap_profile"].startswith(profile + ":")]
+        capped = sum(row["result"] == "capped" for row in group)
+        summary.append({"profile": profile, "runs": str(len(group)), "passed": str(sum(row["result"] == "pass" for row in group)),
+                        "finished_or_capped": f"{len(group) - capped} finished / {capped} capped"})
+    section("Recorded rounds", summary, [("profile", "Round"), ("runs", "Runs"), ("passed", "Passed"), ("finished_or_capped", "Finished or capped")])
+    section("M3 against M4 (separate cap profiles)", [row for row in runs if row["cap_profile"].startswith(("m3:", "m4:"))])
+    for task in sorted({row["task"] for row in runs}):
+        section(task, [row for row in runs if row["task"] == task])
+    section("All runs", runs)
+    page.append("</main></body></html>")
+    return "\n".join(md), "".join(page)

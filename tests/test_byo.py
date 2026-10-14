@@ -9,6 +9,7 @@ import tempfile
 import tomllib
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from toyrepo import _git, make_toy  # noqa: E402
@@ -170,8 +171,11 @@ class FromCommitTest(Scratch):
         repo, sha = self.toy()
         with self.assertRaisesRegex(fromcommit.BuildError, "not a commit"):
             self.build(repo, "deadbeef00")
-        with self.assertRaisesRegex(fromcommit.BuildError, "not a git repository"):
-            self.build(self.tmp, sha)
+        # TMPDIR may be inside another checkout during release verification.
+        # Keep this empty-directory fixture from discovering that parent repo.
+        with patch.dict(os.environ, {"GIT_CEILING_DIRECTORIES": str(self.tmp.parent)}):
+            with self.assertRaisesRegex(fromcommit.BuildError, "not a git repository"):
+                self.build(self.tmp, sha)
         with self.assertRaisesRegex(fromcommit.BuildError, "--id"):
             self.build(repo, sha, task_id="../x")
         self.assertEqual(self.build(repo, sha)[0], 0)

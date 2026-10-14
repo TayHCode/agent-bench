@@ -14,7 +14,7 @@ from pathlib import Path
 from . import __version__
 from .cost import load_prices, usd
 from .peek import scan_transcript
-from .stream import CodexMeter, Meter, fresh_of
+from .stream import CodexMeter, Meter, fresh_of, validate_caps, with_price_model
 from .tasks import diff_summary, load_task, prepare_workdir, run_check, run_setup
 
 EFFORT = "medium"
@@ -71,11 +71,11 @@ PROFILES = {
 }
 # M4: M3 killed 13 of 19 runs at 400k total tokens, nearly all cache reads (fresh tokens were 57k to 98k), so the token
 # cap measured the cap. The token cap now counts fresh tokens only (input + cache writes + output, no cache reads) at
-# 300k; total tokens are no longer capped but are still recorded. Dollar caps are at least 2x what the contestant's
+# 1,000k; total tokens are no longer capped but are still recorded. Dollar caps are at least 2x what the contestant's
 # M3 runs cost (highest M3 run: Haiku 0.03, Sol 0.24, Sonnet 0.43, Opus 0.94, Astra 1.32, team 0.85, swarm 0.62).
-PROFILES["m4"] = {"max_tokens": None, "max_fresh_tokens": 300_000, "max_minutes": 20,
+PROFILES["m4"] = {"max_tokens": None, "max_fresh_tokens": 1_000_000, "max_minutes": 20,
                   "max_usd": {"haiku-5-5@claude-code": 0.30, "sol-6.1@codex": 1.20, "sonnet-5-5@claude-code": 1.50,
-                              "opus-5-5@claude-code": 3.00, "astra-6@codex": 4.00,
+    "opus-5-5@claude-code": 3.00, "astra-6@codex": 4.00,
                               "opus+sonnet-team@claude-code": 4.00, "opus+haiku-swarm@claude-code": 3.00}}
 # Bring-your-own default: small caps a person can afford, per run. A contestant in contestants.toml may lower or raise them.
 BYO_CAPS = {"max_tokens": None, "max_fresh_tokens": 100_000, "max_minutes": 10, "max_usd": 1.0}
@@ -211,6 +211,12 @@ def supervise(proc, meter, tail_root, caps, prompt, transcript_path):
     stop.set()
     watcher.join(timeout=5)
     meter.tail(tail_root)  # pick up whatever was written after the last poll
+    # A fast CLI can exit before the watcher checks usage or a short deadline.
+    why = meter.breach(caps["max_tokens"], caps["max_usd"], caps.get("max_fresh_tokens"))
+    if not why and time.monotonic() > deadline:
+        why = f"minutes > {caps['max_minutes']}"
+    if state["status"] is None and why:
+        state["status"], state["reason"] = "capped", why
     return state["status"], state["reason"]
 
 
@@ -218,14 +224,15 @@ def profile_caps(contestant_id, profile="m2", contestants=None):
     """Default per-run caps for a contestant under a named profile (explicit caps passed to run() still win)."""
     c, prof = (contestants or CONTESTANTS)[contestant_id], PROFILES[profile]
     if profile == "byo":
-        return BYO_CAPS | c.get("caps", {})
-    caps = {k: c[k] for k in ("max_tokens", "max_usd", "max_minutes")} | {"max_fresh_tokens": None}
+        return validate_caps(BYO_CAPS | c.get("caps", {}))
+    caps = (BYO_CAPS.copy() if c.get("user_defined") or "max_tokens" not in c else
+            {k: c[k] for k in ("max_tokens", "max_usd", "max_minutes")} | {"max_fresh_tokens": None})
     for k in ("max_tokens", "max_fresh_tokens", "max_minutes"):
         if k in prof:
             caps[k] = prof[k]
     if "max_usd" in prof:
-        caps["max_usd"] = prof["max_usd"][contestant_id]
-    return caps
+        caps["max_usd"] = prof["max_usd"].get(contestant_id, caps["max_usd"])
+    return validate_caps(caps | c.get("caps", {}))
 
 
 class TaskNotReady(Exception):
@@ -238,6 +245,7 @@ DRAFT_MARK = "<!-- DRAFT"
 def run(task_id, contestant_id, out_dir="runs", tasks_dir=None, caps=None, profile="m2", contestants=None, prices=None):
     """contestants/prices: your own (from contestants.toml); default the built-in table."""
     c = (contestants or CONTESTANTS)[contestant_id]
+    validate_caps(caps or {})
     try:
         task = load_task(task_id, tasks_dir)
     except ValueError as e:
@@ -249,9 +257,11 @@ def run(task_id, contestant_id, out_dir="runs", tasks_dir=None, caps=None, profi
     if caps["max_tokens"]:  # a task that needs an install can ask for more (only when total tokens are capped)
         caps["max_tokens"] = max(caps["max_tokens"], task.get("max_tokens", 0))
     caps |= override
+    validate_caps(caps)
     prices = prices or load_prices()
     if c.get("stub") and STUB_MODEL not in prices["models"]:
         prices = with_stub_price(prices)
+    prices = with_price_model(prices, c["model"], c["price_model"])
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     run_dir = Path(out_dir).resolve() / f"{task_id}__{contestant_id}__{stamp}"
     for n in range(2, 1000):  # repeats of a fast run can land in the same second
@@ -305,6 +315,8 @@ def run(task_id, contestant_id, out_dir="runs", tasks_dir=None, caps=None, profi
     peeks = scan_transcript(run_dir / "transcript.jsonl", task)
     diff = diff_summary(workdir)
     passed, check_out = run_check(task, workdir)
+    if status is None and (meter.result or {}).get("subtype") == "error_max_budget_usd":
+        status, reason = "capped", f"CLI dollar budget exhausted (${caps['max_usd']:g})"
     if status is None:
         if c["cli"] == "codex":
             status = "ok" if proc.returncode == 0 else "error"
@@ -336,7 +348,7 @@ def run(task_id, contestant_id, out_dir="runs", tasks_dir=None, caps=None, profi
         "tokens_crosscheck_ok": None if vendor_total is None else abs(vendor_total - tokens_total) <= 0.02 * max(vendor_total, 1),
         "usd_equivalent": round(sum(usd(m, t, prices, meter.max_prompt()) for m, t in priced.items()), 5),
         "unpriced_models": sorted(set(tokens) - set(priced)),
-        "models_seen": sorted(tokens), "model_as_requested": c["price_model"] in tokens,
+        "models_seen": sorted(tokens), "model_as_requested": c["model"] in tokens or c["price_model"] in tokens,
         "vendor_total_cost_usd": (meter.result or {}).get("total_cost_usd"),
         "price_table": prices["version"], "billing": "subscription-run, dollar-equivalent from public prices",
         "team": c.get("team"), "subagents": subagents, "workers": workers,

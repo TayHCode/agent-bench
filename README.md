@@ -91,7 +91,7 @@ Same run without questions: agentbench start --repo ~/code/myapp --commit 3483b7
 
 Every question has a flag, so scripts and CI never wait for input: `agentbench start --repo ./myapp --commit FIX_SHA --agents haiku-5-5@claude-code,sonnet-5-5@claude-code --ledger-cap 1 --yes`. Other flags: `--task NAME` (a task you already built), `--prompt 'what is wrong'`, `--check`/`--setup` (when the test command guess is wrong), `--repeats N`, `--html FILE`, `--no-open`. `agentbench start --agents stub` rehearses your own repo for free.
 
-**Cheapest first.** `start` and `matrix` run the cheapest contestant first on each task. Pricier contestants are skipped on a task only when the cheapest one did not pass and the task proves broken (its check fails on the known fix, or passes without any fix); otherwise everyone runs. Spending stops at the ledger cap. `--repeats N` runs each contestant N times per task.
+**Cheapest first.** `start` and `matrix` run the cheapest contestant first on each task. Pricier contestants are skipped on a task only when the cheapest one did not pass and the task proves broken (its check fails on the known fix, or passes without any fix); otherwise everyone runs. New runs stop once recorded spend reaches 90% of the ledger cap; each run is cut to the remaining ledger balance. `--repeats N` runs each contestant N times per task.
 
 **When something fails** you get what happened and one command to fix it, never a stack trace:
 
@@ -167,7 +167,8 @@ Each run has a clean HOME; login files are linked, never copied. Optional `files
 ## Built-in tasks
 
 Nine task definitions ship in `tasks/`, each with a prompt, deterministic check,
-manifest and LICENSE-SOURCE. Two data tasks include inputs and known answers;
+manifest and LICENSE-SOURCE; the extra `scrapy-priority-queues` folder is
+licence-only and is not a runnable task. Two data tasks include inputs and known answers;
 QCEW downloads checksum-pinned archives and constructs answers at preparation.
 The six code tasks download pinned base and fix commits instead of vendoring
 upstream trees. Sources and full licence notices are in
@@ -224,7 +225,7 @@ agentbench plan --task fda-recalls-clean --contestants haiku-5-5@claude-code --l
 agentbench matrix --task fda-recalls-clean --contestants haiku-5-5@claude-code --ledger-cap 1
 ```
 
-Profiles: M2 uses the pilot's per-contestant caps; M3 caps total tokens at 400k including cache reads; M4 caps fresh tokens at 300k; `byo` uses the smaller defaults above. `--task` alone selects the older M2 profile and all contestants: name contestants explicitly for one cheap run.
+Profiles: M2 uses the pilot's per-contestant caps; M3 caps total tokens at 400k including cache reads; M4 caps fresh tokens at 1,000,000 (the largest completed recorded run used 218,785 fresh tokens); `byo` uses the smaller defaults above. A per-run table says `finished` when a run exits without a cap, `capped` when a token, dollar or time guard is exceeded (including final session usage checked after exit), and `error` when the CLI ends in error. The recorded M4 tables put the cap reason in a separate column; raw-run reports and archived reports append it as `capped: <reason>`. A capped run is not a model failure. `--task` alone selects the older M2 profile and all contestants: name contestants explicitly for one cheap run.
 
 ## Optional judge
 
@@ -247,11 +248,15 @@ agentbench judge --runs runs --judge gemini --max-usd 1 --agree 5   # re-judge 5
 
 ## Published measurements
 
-Read [the pilot](evidence/m2-pilot-results.md), [M3](evidence/m3-results.md), [M4](evidence/m4-results.md), their conclusions and local HTML counterparts. [results.csv](evidence/results.csv) contains the compact per-run table from the final report, preserving rounded values and cap profiles. Raw run JSON and transcripts are omitted because they can contain paths, session IDs and output. The CSV cannot reconstruct per-file diffs or independently recompute every table.
+Read [the pilot](evidence/m2-pilot-results.md), [M3](evidence/m3-results.md), [M4](evidence/m4-results.md), their conclusions and local HTML counterparts. [results.csv](evidence/results.csv) contains the compact per-run table from the final report, preserving rounded values and cap profiles. Raw run JSON and transcripts are omitted because they can contain paths, session IDs and output. The CSV cannot reconstruct per-file diffs or hidden-check outcomes on historical capped work. The compact M4 reports are reproducible from it; older reports are archived, with minimal presentation repairs because their raw records are unavailable.
 
-These exploratory experiments use short tasks and do not rank models: pilot cells have one or two repeats; M3/M4 cells have n=1. Total-token caps dominated M3. M4 is incomplete: both Astra hard-task cells and the Sonnet-team mypy cell are missing. Haiku/Sonnet probes influenced task selection. Costs are dated list-price equivalents of subscription usage, not invoices. Keep cap profiles separate and distinguish capped work passing checks from completed passes. The [cost plan](evidence/cost-plan.md) is historical; the [price table](evidence/price-table.md) records its assumptions.
+These exploratory experiments use short tasks and do not rank models: pilot cells have one or two repeats; M3/M4 cells have n=1. M2 has 8 capped runs and M3 has 13, so those older rounds are cap-distorted; M4 has 2 capped runs across 16 recorded cells. The three formerly missing M4 cells—Astra 6 on `werkzeug-apply-conditions`, Astra 6 on `mypy-deferred-alias-crash`, and the Opus + Sonnet team on `mypy-deferred-alias-crash`—are recorded under a separate 1,000,000-fresh-token profile; the original M4 cells used 300,000 fresh tokens. Haiku/Sonnet probes influenced task selection. Costs are dated list-price equivalents of subscription usage, not invoices. Keep cap profiles separate and distinguish capped work passing checks from completed passes. The [cost plan](evidence/cost-plan.md) is historical; the [price table](evidence/price-table.md) records its assumptions.
 
-## Safety and limitations
+Result: **Across the 16 M4 runs, 14 finished (11 passed and 3 failed) and two were capped; the three added cells produced passes for Astra 6 on mypy and the Opus + Sonnet team on mypy, while Astra 6’s Werkzeug work passed the hidden check but was capped by dollar usage, under a reduced $1.49 per-run dollar guard; the other two cells used reduced $1.40 and $1.85 guards, and $3.4716 is the total dollar-equivalent cost of all three cells.**
+
+On M4's two code tasks, Opus solo passed both; the Haiku swarm passed mypy and was capped on Werkzeug, while the Sonnet team passed both under different cap profiles, so these n=1 runs do not establish a helper advantage.
+
+## Limitations
 
 Agents send code they read to their vendors. Review private tasks before selecting contestants. A clean HOME and disposable checkout are not a sandbox: agents run as your OS user and may reach hidden tests or other files. MCP/connectors are disabled in supported CLI invocations, but filesystem and network access remain. Peek detection catches obvious commands naming hidden/gold paths, fix commits or source URLs; it is incomplete. Task setup and checks execute task-provided code. Use trusted code and isolation when needed.
 
@@ -264,3 +269,19 @@ python -m unittest discover -s tests -q
 ```
 
 `sh tests/install_check.sh` installs into a fresh environment and runs `doctor` and `demo` (and `uvx` if present); `python tests/readme_demo.py` runs the older step-by-step stub walkthrough. The suite includes a full shipping-tree privacy regression check and synthetic scanner fixtures. Run one suite process at a time. See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md). Runner license: MIT, copyright TayHCode.
+
+Cap values in CLI options, contestant files, the API and ledgers must be positive and finite: zero, negative, NaN and infinite values are rejected before an agent launches. Dollar and minute caps are mandatory; there is no unlimited CLI mode. An API token cap can explicitly be `None` to disable that token guard; the other guards remain. Caps react to completed usage events, with session-file usage polled about once a second, so they can overshoot by a whole model call (or usage received between polls); they are not prepaid spending guarantees. Numeric guards trip after usage exceeds the cap; landing exactly on it does not trip the guard. Unknown model prices stop a dollar-guarded run and are recorded as unpriced usage, not a measured zero-cost success.
+
+File-defined contestants work with every profile: they start with BYO defaults, use the selected profile's token and time limits, and keep the BYO dollar default where that profile has no price-specific cap. Explicit contestant caps and then CLI/API caps take precedence.
+
+An optional `price_model` in a contestant definition selects an existing price-table entry for its configured `model` alias. Plans, live dollar guards and recorded costs all use that entry, while usage records keep the observed model names. The mapping applies only to that alias; other models need their own prices. The runner also checks final session usage and elapsed time after the CLI exits, so a fast exit cannot bypass a cap.
+
+Rebuild the compact recorded M4 reports without model calls:
+
+```sh
+agentbench report --results-csv evidence/results.csv --md evidence/m4-results.md --html evidence/m4-results.html --conclusion evidence/m4-conclusion.md
+```
+
+`--results-csv` rebuilds this repository's M4 reports with their historical-round notes; it requires the columns shipped in `evidence/results.csv`. HTML conclusions render prose, Markdown headings and pipe tables, including CRLF text and headings directly next to tables. Supplied HTML is escaped.
+
+The export privacy test reads a JSON array of literal terms from an external file selected by `AGENTBENCH_PRIVATE_TERMS_FILE`; it rejects a file inside the repository. Without a list, it prints that the real private-term check did not run and exercises synthetic fixtures plus generic shipping scans for home paths, email addresses, private IPv4 addresses, common local hostnames and credentials. Generic shapes cannot recognize every private term. Never commit the real list.

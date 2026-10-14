@@ -3,6 +3,7 @@
     [contestants."haiku-plain"]
     cli = "claude-code"            # claude-code or codex
     model = "claude-haiku-5-5"
+    # price_model = "claude-haiku-5-5"  # optional: price the configured model alias with this entry
     effort = "medium"              # optional, default medium
     files = ["my-rules.md"]            # optional: files copied into the clean HOME, nothing else
     # Explicit mappings select the canonical config destination for the chosen CLI.
@@ -22,9 +23,10 @@ from pathlib import Path
 
 from .cost import load_prices
 from .fromcommit import is_secret_file
+from .stream import CapError, validate_caps
 
 CLIS = ("claude-code", "codex")
-KEYS = {"cli", "model", "price_model", "effort", "files", "max_usd", "max_fresh_tokens", "max_minutes"}
+KEYS = {"cli", "model", "price_model", "effort", "files", "max_usd", "max_tokens", "max_fresh_tokens", "max_minutes"}
 EFFORTS = ("low", "medium", "high", "xhigh", "max")
 PRICE_KEYS = ("input", "output", "cache_read", "cache_write")
 NEVER_COPY_NAMES = {".credentials.json", "auth.json", ".claude.json", ".netrc", "config.toml"}
@@ -102,7 +104,11 @@ def load(path):
         price_model = c.get("price_model", c["model"])
         if price_model not in prices["models"]:
             raise ContestantsError(f"contestant {cid!r}: no price for model {price_model!r}; add a [prices.\"{price_model}\"] table to the file")
-        caps = {k: c[k] for k in ("max_usd", "max_fresh_tokens", "max_minutes") if k in c}
+        caps = {k: c[k] for k in ("max_usd", "max_tokens", "max_fresh_tokens", "max_minutes") if k in c}
+        try:
+            validate_caps(caps)
+        except CapError as e:
+            raise ContestantsError(f"contestant {cid!r}: {e}") from None
         defs[cid] = {"cli": c["cli"], "model": c["model"], "price_model": price_model, "effort": effort, "caps": caps,
                      "files": parse_files(cid, c["cli"], c.get("files", []), path.parent), "user_defined": True}
     if not defs:

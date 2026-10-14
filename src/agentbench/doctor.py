@@ -31,7 +31,7 @@ def git_fix():
         return "xcode-select --install"
     if sys.platform.startswith("win"):
         return "agentbench needs WSL on Windows: run `wsl --install`, then work inside WSL"
-    return "sudo apt install git   (or your distro's package manager)"
+    return "Install Git using your distribution's documented package manager (Debian/Ubuntu: apt install git)"
 
 
 def run_quiet(argv, timeout=20):
@@ -128,7 +128,7 @@ def diagnose(needs=(), disk_path=None):
     results += [check_agent(cli, cli in needs) for cli in ("claude-code", "codex")]
     if not shutil.which("uv"):
         results.append(check("note", "uv", "uv is not installed (only needed for tasks whose checks use it, such as the built-in code tasks)",
-                             "curl -LsSf https://astral.sh/uv/install.sh | sh"))
+                             "See https://docs.astral.sh/uv/getting-started/installation/ and choose an installation method"))
     return results
 
 

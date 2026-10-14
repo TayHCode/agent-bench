@@ -130,6 +130,8 @@ class DoctorTest(Env):
         self.assertEqual(code, 1)
         self.assertIn("BLOCKER", out)
         self.assertIn("apt install git", out) if sys.platform.startswith("linux") else None
+        self.assertNotIn("sudo ", out)
+        self.assertNotIn("| sh", out)
 
     def test_old_python_is_a_blocker_with_a_fix(self):
         with mock.patch.object(doctor.sys, "version_info", (3, 9, 1, "final", 0)):

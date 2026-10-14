@@ -247,5 +247,14 @@ class ReportColumnTest(unittest.TestCase):
         self.assertEqual(report.load_runs(d)[0]["judge"]["quality"], 3.5)
 
 
+class JudgeCapValidationTest(unittest.TestCase):
+    def test_nonpositive_or_nonfinite_judge_cap_is_rejected_before_any_call(self):
+        from unittest.mock import patch
+        for value in ("0", "-1", "nan", "inf"):
+            with patch("agentbench.judge.make_backend") as backend, contextlib.redirect_stderr(io.StringIO()) as output:
+                self.assertEqual(cli.main(["judge", "--judge", "stub", "--max-usd", value]), 2)
+                self.assertIn("positive finite", output.getvalue())
+                backend.assert_not_called()
+
 if __name__ == "__main__":
     unittest.main()

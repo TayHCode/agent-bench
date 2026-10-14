@@ -1,6 +1,6 @@
 # M2: pilot run on the other three tasks, and the results page (2026-10-10)
 
-Results: `evidence/m2-pilot-results.html` (one self-contained page) and `evidence/m2-pilot-results.md` (same tables). Both are produced by
+Results: `evidence/m2-pilot-results.html` (one self-contained page) and `evidence/m2-pilot-results.md` (same tables). Both were originally produced by
 `agentbench report --html evidence/m2-pilot-results.html --md evidence/m2-pilot-results.md --conclusion evidence/m2-conclusion.md`.
 Unshipped raw run records stayed under `runs/` (ignored by git); `agentbench backfill` adds the per-file diff and worker count to older records.
 
@@ -41,3 +41,5 @@ All eight are cap kills on taskiq-lazy-logging; no run finished and then failed 
 - removed pilot (real fix 2 lines): Sol, Astra, Sonnet 2 lines; Haiku 2-3; Opus 4-6; Opus + Sonnet team 4-7; swarm 2 and 11. All touched the one file the fix touched.
 - humanize (real fix 2 lines): Sol 2, Astra 3, Haiku 3-8; Sonnet 21-24; Opus 26-61; teams 8-25. All touched the one file the fix touched.
 - taskiq (real fix 85 lines excluding the 3 unrelated files): all passing runs 63-70 lines in the same 11 files.
+
+These archived reports received presentation repairs after generation. Their raw historical sessions are not shipped, so full regeneration is unavailable; the rounded per-run measurements remain in `results.csv`.

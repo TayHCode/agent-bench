@@ -15,7 +15,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from test_byo import STUB_SRC, UNITTEST, Scratch  # noqa: E402
 
-from agentbench import checkfiles, cli, contestants, peek, plan, report, runner, tasks  # noqa: E402
+from agentbench import checkfiles, cli, contestants, cost, peek, plan, report, runner, tasks  # noqa: E402
 
 SRC = Path(__file__).resolve().parents[1] / "src"
 
@@ -439,6 +439,122 @@ class NoNetworkTest(Scratch):
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
         self.assertIn("passed=True", r.stdout)
 
+
+class AuditRunnerRegressionTest(Scratch):
+    def config(self, extra=""):
+        path = self.tmp / "contestants.toml"
+        path.write_text('[contestants.mine]\ncli="claude-code"\nmodel="claude-haiku-5-5"\n' + extra)
+        return path
+
+    def test_file_contestant_run_plan_matrix_under_every_profile(self):
+        from contextlib import redirect_stdout, redirect_stderr
+        fixture = Path(__file__).parent / "fixtures"
+        self.stub(fix_dir=str((fixture / "median-bug/gold").resolve()))
+        path = self.config()
+        for profile in runner.PROFILES:
+            common = ["--contestants-file", str(path), "--tasks-dir", str(fixture), "--profile", profile]
+            for command in ("run", "plan", "matrix"):
+                output = io.StringIO()
+                args = [command, "--task", "median-bug", "--out", str(self.tmp / f"{profile}-{command}")] + common
+                args += ["--contestant", "mine"] if command == "run" else ["--contestants", "mine", "--ledger-cap", "1"]
+                with self.subTest(profile=profile, command=command), redirect_stdout(output), redirect_stderr(output):
+                    self.assertEqual(cli.main(args), 0, output.getvalue())
+        # The auditor's default 'run' case must also work without --profile.
+        with redirect_stdout(io.StringIO()):
+            self.assertEqual(cli.main(["run", "--task", "median-bug", "--contestant", "mine", "--contestants-file", str(path),
+                                       "--tasks-dir", str(fixture), "--out", str(self.tmp / "default")]), 0)
+
+    def test_file_contestant_plan_and_report_describe_both_token_guards(self):
+        defs, prices = contestants.load(self.config())
+        for profile in ("m2", "m3"):
+            value = plan.make_plan(["synthetic-task"], ["mine"], defs, prices, profile, 1, 1)
+            text = plan.display_plan(value)
+            self.assertIn("100,000 fresh tokens", text)
+            run = {"cap_profile": profile, "caps": value["rows"][0]["caps"]}
+            description = report.profile_desc(run)
+            self.assertIn(f"{profile}: 100k fresh tokens", description)
+            if profile == "m3":
+                self.assertIn("400,000 total tokens", text)
+                self.assertIn("400k total tokens", description)
+            else:
+                self.assertNotIn("total tokens", text)
+                self.assertNotIn("total tokens", description)
+            heading = report.leaderboard_groups([run])[0][0]
+            self.assertIn("see the Cap profile column", heading)
+            self.assertNotIn("cap on total tokens", heading)
+
+    def test_invalid_caps_from_api_cli_and_toml_never_launch(self):
+        from contextlib import redirect_stderr
+        from unittest.mock import patch
+        from agentbench.stream import CapError, Meter
+        fixture = Path(__file__).parent / "fixtures"
+        self.stub(tokens=5_000_000)
+        path = self.config()
+        for key in ("max_tokens", "max_fresh_tokens", "max_usd", "max_minutes"):
+            for value in (0, -1, float("nan"), float("inf")):
+                with self.subTest(key=key, value=value), patch("agentbench.runner.subprocess.Popen") as launch:
+                    with self.assertRaisesRegex(CapError, "positive finite"):
+                        runner.run("median-bug", "haiku-5-5@claude-code", self.tmp / "runs", fixture,
+                                   {key: value, **({"max_fresh_tokens": None} if key == "max_usd" else {})}, profile="m4")
+                    launch.assert_not_called()
+            for value in (0, -1):
+                with self.subTest(key=key, source="CLI"), redirect_stderr(io.StringIO()) as output:
+                    code = cli.main(["run", "--task", "median-bug", "--contestant", "mine", "--contestants-file", str(path),
+                                     "--tasks-dir", str(fixture), "--" + key.replace("_", "-"), str(value)])
+                    self.assertEqual(code, 2)
+                    self.assertIn("positive finite", output.getvalue())
+                with self.assertRaisesRegex(contestants.ContestantsError, "positive finite"):
+                    contestants.load(self.config(f"{key} = {value}\n"))
+                path = self.config()
+        for kwargs in ({"max_tokens": 0}, {"max_fresh": 0}, {"max_usd": 0}):
+            args = {"max_tokens": None, "max_usd": None, "max_fresh": None} | kwargs
+            with self.assertRaisesRegex(CapError, "positive finite"):
+                Meter().breach(**args)
+
+    def test_tiny_remaining_ledger_is_positive_and_invalid_ledgers_are_refused(self):
+        from agentbench.stream import CapError
+        seen = []
+        def fake(task, cid, out, tasks_dir, caps, **kwargs):
+            seen.append(caps["max_usd"])
+            return {"usd_equivalent": 0, "status": "ok", "passed": True, "wall_s": 0, "tokens_total": 0}
+        defs, prices = contestants.load(self.config())
+        self.assertEqual(cli.run_matrix("t", ["mine"], self.tmp / "out", None, 0.00001, runner_run=fake,
+                                        profile="m4", defs=defs, prices=prices, say=lambda msg: None), 0)
+        self.assertEqual(seen, [0.00001])
+        for value in (0, -1, float("nan"), float("inf")):
+            with self.assertRaises(CapError):
+                cli.run_matrix("t", ["mine"], self.tmp / "out", None, value, runner_run=fake)
+            with self.assertRaises(plan.PlanError):
+                plan.make_plan(["t"], ["mine"], defs, prices, "m4", 1, value)
+
+    def test_unpriced_usage_and_non_object_json_are_supervised_and_recorded(self):
+        fixture = Path(__file__).parent / "fixtures"
+        self.stub(model="synthetic-unpriced", tokens=1_000_000, json_noise=[1, [], None], sleep_after_usage=60)
+        rec = runner.run("median-bug", "haiku-5-5@claude-code", self.tmp / "runs", fixture,
+                         caps={"max_usd": 0.01, "max_fresh_tokens": None}, profile="m4")
+        self.assertEqual(rec["status"], "capped")
+        self.assertIn("cannot price", rec["cap_reason"])
+        self.assertEqual(rec["unpriced_models"], ["synthetic-unpriced"])
+        self.assertLess(rec["wall_s"], 10)
+        self.assertEqual(len(list((self.tmp / "runs").glob("*/run.json"))), 1)
+        from agentbench.stream import CodexMeter, Meter
+        meter = CodexMeter(costs := cost.load_prices(), "synthetic-unpriced")
+        for event in (1, [], None):
+            meter.feed(event)
+            Meter(costs).feed(event)
+        meter.total = {"input_tokens": 1_000_000}
+        self.assertIn("cannot price", meter.breach(None, 0.01))
+
+    def test_matrix_stops_on_unpriced_usage_before_another_run(self):
+        defs, prices = contestants.load(self.config())
+        calls = []
+        def fake(task, cid, out, tasks_dir, caps, **kwargs):
+            calls.append(cid)
+            return {"usd_equivalent": 0, "status": "capped", "passed": False, "wall_s": 0, "tokens_total": 1_000_000,
+                    "unpriced_models": ["synthetic-unpriced"]}
+        self.assertEqual(cli.run_matrix("t", ["mine"], self.tmp / "out", None, 1, runner_run=fake, repeats=2,
+                                        profile="m4", defs=defs, prices=prices, say=lambda msg: None), 2)
+        self.assertEqual(calls, ["mine"])
 
 if __name__ == "__main__":
     unittest.main()

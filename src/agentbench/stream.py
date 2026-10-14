@@ -7,14 +7,26 @@ CODEX_HOME, which carries a cumulative `token_count` after every model call.
 """
 
 import json
+import math
 import re
 import threading
 from pathlib import Path
 
-from .cost import usd
+from .cost import load_prices, usd
 
 
 FRESH = ("input", "cache_write", "cache_write_5m", "output")  # everything except cache reads
+
+
+def with_price_model(prices, model, price_model):
+    """Apply a contestant's explicit pricing alias to a run-local table only.
+
+    Keep observed model names in the usage record. Other models, including
+    sub-agents, retain their own prices or remain unpriced.
+    """
+    if model == price_model:
+        return prices
+    return prices | {"models": prices["models"] | {model: prices["models"][price_model]}}
 
 
 def fresh_of(tokens):
@@ -22,12 +34,32 @@ def fresh_of(tokens):
     return sum(tokens.get(k, 0) for k in FRESH)
 
 
+class CapError(ValueError):
+    """An invalid cap, rejected before launching an agent."""
+
+
+def validate_caps(caps):
+    for name, value in caps.items():
+        if value is None and name in ("max_tokens", "max_fresh_tokens"):
+            continue  # explicit absence of this token guard
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+            raise CapError(f"{name} must be a positive finite number; zero and negative caps are not unlimited")
+    return caps
+
+
+def _validate_meter_caps(max_tokens, max_usd, max_fresh):
+    validate_caps({"max_tokens": max_tokens, "max_fresh_tokens": max_fresh})
+    if max_usd is not None:
+        validate_caps({"max_usd": max_usd})
+
+
 def _breach(total, fresh, usd_now, max_tokens, max_usd, max_fresh):
-    if max_tokens and total > max_tokens:
+    _validate_meter_caps(max_tokens, max_usd, max_fresh)
+    if max_tokens is not None and total > max_tokens:
         return f"tokens {total} > {max_tokens}"
-    if max_fresh and fresh > max_fresh:
+    if max_fresh is not None and fresh > max_fresh:
         return f"fresh tokens {fresh} > {max_fresh}"
-    if max_usd and usd_now > max_usd:
+    if max_usd is not None and usd_now > max_usd:
         return f"usd {usd_now:.4f} > {max_usd}"
     return None
 
@@ -75,6 +107,8 @@ class Meter:
                 self.by_message[mid] = (model, tok)
 
     def feed(self, event):
+        if not isinstance(event, dict):
+            return
         msg = event.get("message")
         if event.get("type") == "assistant" and isinstance(msg, dict):
             self.add(msg.get("id") or event.get("uuid") or id(event), msg.get("model"), msg.get("usage"))
@@ -89,6 +123,8 @@ class Meter:
                 try:
                     e = json.loads(line)
                 except json.JSONDecodeError:
+                    continue
+                if not isinstance(e, dict):
                     continue
                 msg = e.get("message")
                 if e.get("type") == "assistant" and isinstance(msg, dict):
@@ -113,6 +149,10 @@ class Meter:
         return total
 
     def breach(self, max_tokens, max_usd, max_fresh=None):
+        _validate_meter_caps(max_tokens, max_usd, max_fresh)
+        if max_usd is not None and any(m not in (self.prices or load_prices())["models"]
+                                       for m in self.by_model()):
+            return "dollar guard cannot price observed model usage"
         return _breach(self.tokens, self.fresh, self.usd, max_tokens, max_usd, max_fresh)
 
     def by_model(self):
@@ -148,6 +188,8 @@ class CodexMeter:
         self._offsets = {}
 
     def feed(self, event):  # stdout JSONL
+        if not isinstance(event, dict):
+            return
         self.events += 1
         if event.get("type") == "turn.completed" and event.get("usage"):
             self.final = event["usage"]
@@ -188,6 +230,10 @@ class CodexMeter:
             return 0.0
 
     def breach(self, max_tokens, max_usd, max_fresh=None):
+        _validate_meter_caps(max_tokens, max_usd, max_fresh)
+        priced = (self.prices or load_prices())["models"]
+        if max_usd is not None and self.total and any(m not in priced for m in (self.models or {self.model})):
+            return "dollar guard cannot price observed model usage"
         return _breach(self.tokens, self.fresh, self.usd, max_tokens, max_usd, max_fresh)
 
     def by_model(self):
