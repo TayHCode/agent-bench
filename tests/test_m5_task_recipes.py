@@ -39,7 +39,7 @@ class M5TaskRecipes(unittest.TestCase):
         self.assertFalse(list(DATA.rglob('*.zip')))
 
     def test_checker_rejects_nan_duplicates_extra_keys_and_lost_fips(self):
-
+        # Exercise a contract boundary, independent of any answer arithmetic.
         old_file=checker.__file__
         import os
         cwd=Path.cwd()

@@ -239,8 +239,8 @@ class SetupTest(Scratch):
                         "pathlib.Path('tracked.txt').write_text('b\\n')"])
         self.stub()
         rec = runner.run("t1", "haiku-5-5@claude-code", self.tmp / "runs", self.tmp / "tasks")
-        self.assertEqual(rec["diff"]["files_changed"], 0)
-        self.assertEqual(rec["tokens_total"], 1060)
+        self.assertEqual(rec["diff"]["files_changed"], 0)  # install output and the lockfile-style edit are the start state
+        self.assertEqual(rec["tokens_total"], 1060)  # only the stub's own tokens are metered
         self.assertTrue((next((self.tmp / "runs").glob("*/work")) / "node_modules" / "x").exists())
 
     def test_failing_setup_stops_before_the_agent_starts(self):

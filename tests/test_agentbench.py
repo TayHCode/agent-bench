@@ -502,7 +502,7 @@ class ReportPageTest(unittest.TestCase):
         self.assertEqual(order, ["haiku-5-5@claude-code", "opus-5-5@claude-code", "opus+haiku-swarm@claude-code"])
         opus = report.standings(self.runs)[1]
         self.assertEqual((opus["passed"], opus["runs"]), (1, 2))
-        self.assertAlmostEqual(opus["per_solved"], 0.7)
+        self.assertAlmostEqual(opus["per_solved"], 0.7)  # failed spend is charged to the solved run
         self.assertIsNone(report.standings(self.runs)[2]["per_solved"])
 
     def test_spread_notes_flag_flips_and_cost_swings(self):
@@ -536,7 +536,7 @@ class ReportPageTest(unittest.TestCase):
         self.assertEqual(report.compare_to_gold(run, gold)["mine"], 8)
         info = report.task_info("taskiq-lazy-logging")
         self.assertIn("taskiq/acks.py", info["manifest"]["gold_comparison"]["ignore"])
-        self.assertEqual(info["gold"], [])
+        self.assertEqual(info["gold"], [])  # fetched by the pinned recipe, not vendored
 
     def test_docs_changelogs_and_data_driven_test_cases_are_not_source_lines(self):
         for path in ("docs/quickstart.rst", "CHANGES.rst", "changelog/5093.bugfix.rst"):

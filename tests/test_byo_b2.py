@@ -130,7 +130,7 @@ class PlanTest(unittest.TestCase):
         p = plan.make_plan(["a", "b", "c"], ["haiku-5-5@claude-code", "sonnet-5-5@claude-code"], None, self.prices(), "byo", 1, 5.0)
         self.assertEqual(p["runs"], 6)
         self.assertAlmostEqual(p["worst"], 6.0)
-        self.assertAlmostEqual(p["ceiling"], 5.0)
+        self.assertAlmostEqual(p["ceiling"], 5.0)  # the ledger cap bounds the spend
         haiku = plan.expected_each("haiku-5-5@claude-code", runner.CONTESTANTS["haiku-5-5@claude-code"], self.prices(), [])[0]
         sonnet = plan.expected_each("sonnet-5-5@claude-code", runner.CONTESTANTS["sonnet-5-5@claude-code"], self.prices(), [])[0]
         self.assertAlmostEqual(haiku, 0.0058, places=4)
@@ -268,7 +268,7 @@ class CheckFilesTest(Scratch):
         r = subprocess.run([sys.executable, "-m", "agentbench.cli", "check-files", a, e, "--key", "id"], capture_output=True, text=True,
                            env=os.environ | {"PYTHONPATH": str(SRC)})
         self.assertEqual(r.returncode, 0, r.stdout)
-
+        # a task whose check is `agentbench check-files ...` finds this install without agentbench on PATH
         root = self.tmp / "tasks" / "d1"
         (root / "repo").mkdir(parents=True)
         (root / "repo" / "in.txt").write_text("x\n")
@@ -381,7 +381,7 @@ class TooEasyTest(unittest.TestCase):
         self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "b", status="capped")]), [])
         self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "b", wall=300)]), [])
         self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "b", fresh=90_000)]), [])
-        self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "a")]), [])
+        self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "a")]), [])  # one contestant cannot be separated from itself
         self.assertEqual(report.too_easy_tasks(easy + [synth("u", "a"), synth("u", "b", passed=False)]), ["t"])
 
     def test_report_says_so(self):
@@ -397,7 +397,7 @@ class NoNetworkTest(Scratch):
     def test_no_module_of_agentbench_imports_anything_that_talks_to_a_network(self):
         for path in (SRC / "agentbench").glob("*.py"):
             if path.name == "judge_gemini.py":
-                continue
+                continue  # the optional judge backend: used only with --judge gemini
             for node in ast.walk(ast.parse(path.read_text())):
                 names = [a.name for a in node.names] if isinstance(node, ast.Import) else [node.module or ""] if isinstance(node, ast.ImportFrom) else []
                 for n in names:

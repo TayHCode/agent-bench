@@ -293,7 +293,7 @@ def run(task_id, contestant_id, out_dir="runs", tasks_dir=None, caps=None, profi
             env["ANTHROPIC_API_KEY"] = os.environ["ANTHROPIC_API_KEY"]
         cmd, meter, tail_root = claude_command(c, caps["max_usd"]), Meter(prices), home / ".claude" / "projects"
 
-    ok, setup_out, _ = run_setup(task, workdir, env)
+    ok, setup_out, _ = run_setup(task, workdir, env)  # installs happen before the clock and the meter start
     if not ok:
         shutil.rmtree(run_dir, ignore_errors=True)
         raise TaskNotReady(f"the task's setup command failed:\n{setup_out}")

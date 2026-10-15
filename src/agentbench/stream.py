@@ -182,7 +182,7 @@ class CodexMeter:
 
     def __init__(self, prices=None, model=None):
         self.prices, self.model = prices, model
-        self.total = None
+        self.total = None  # latest cumulative total_token_usage
         self.efforts, self.models = set(), set()
         self.events, self.final = 0, None
         self._offsets = {}
