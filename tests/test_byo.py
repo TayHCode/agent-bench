@@ -17,7 +17,7 @@ from toyrepo import _git, make_toy  # noqa: E402
 from agentbench import fromcommit, runner, tasks  # noqa: E402
 
 STUB_SRC = Path(__file__).resolve().parent / "stub_claude.py"
-UNITTEST = "python3 -m unittest discover -s tests"  # the toy's tests are plain unittest: no pytest needed
+UNITTEST = "python3 -m unittest discover -s tests"
 FAKE_KEY = "AKIA" + "ABCDEFGHIJKLMNOP"  # built at run time so this file holds no secret-shaped string
 
 
@@ -55,9 +55,9 @@ class FromCommitTest(Scratch):
         code, folder = self.build(repo, sha)
         self.assertEqual(code, 0, self.said())
         self.assertIn("unfixed fails, fixed passes, both twice", self.said())
-        self.assertIn("return round(sum(prices) *", (folder / "repo" / "cart.py").read_text())  # the parent's buggy code
+        self.assertIn("return round(sum(prices) *", (folder / "repo" / "cart.py").read_text())
         self.assertNotIn("prices or []", (folder / "repo" / "cart.py").read_text())
-        self.assertNotIn("none_means_no_prices", (folder / "repo" / "tests" / "test_cart.py").read_text())  # new test is hidden
+        self.assertNotIn("none_means_no_prices", (folder / "repo" / "tests" / "test_cart.py").read_text())
         self.assertIn("none_means_no_prices", (folder / "hidden" / "overlay" / "tests" / "test_cart.py").read_text())
         self.assertIn("prices or []", (folder / "gold" / "cart.py").read_text())
         self.assertFalse((folder / "gold" / "tests").exists())
@@ -67,7 +67,7 @@ class FromCommitTest(Scratch):
         self.assertEqual(manifest["fix_commit"], sha)
         task = tomllib.loads((folder / "task.toml").read_text())
         self.assertEqual(task["check"], UNITTEST.split())
-        self.assertNotIn(".building", " ".join(os.listdir(self.tmp / "tasks")))  # no half-built folder left
+        self.assertNotIn(".building", " ".join(os.listdir(self.tmp / "tasks")))
 
     def test_prompt_is_a_draft_without_trailers_and_run_refuses_it(self):
         repo, sha = self.toy()
@@ -88,9 +88,9 @@ class FromCommitTest(Scratch):
         rec = runner.run("toy-null-total", "haiku-5-5@claude-code", self.tmp / "runs", self.tmp / "tasks")
         self.assertTrue(rec["passed"], rec["check_output_tail"])
         self.assertEqual(rec["diff"]["files"][0]["path"], "cart.py")
-        self.stub()  # an agent that changes nothing
+        self.stub()
         rec = runner.run("toy-null-total", "haiku-5-5@claude-code", self.tmp / "runs2", self.tmp / "tasks")
-        self.assertFalse(rec["passed"])  # the unfixed tree fails the hidden test
+        self.assertFalse(rec["passed"])
 
     def test_a_flaky_check_is_rejected(self):
         repo, sha = self.toy()
@@ -100,7 +100,7 @@ class FromCommitTest(Scratch):
         self.assertEqual(code, 4)
         self.assertIsNone(folder)
         self.assertIn("flaky", self.said())
-        self.assertEqual([p.name for p in (self.tmp / "tasks").iterdir()], [])  # nothing left behind
+        self.assertEqual([p.name for p in (self.tmp / "tasks").iterdir()], [])
 
     def test_a_check_that_passes_on_the_unfixed_tree_is_rejected(self):
         repo, sha = self.toy()
@@ -239,13 +239,13 @@ class SetupTest(Scratch):
                         "pathlib.Path('tracked.txt').write_text('b\\n')"])
         self.stub()
         rec = runner.run("t1", "haiku-5-5@claude-code", self.tmp / "runs", self.tmp / "tasks")
-        self.assertEqual(rec["diff"]["files_changed"], 0)  # install output and the lockfile-style edit are the start state
-        self.assertEqual(rec["tokens_total"], 1060)  # only the stub's own tokens are metered
+        self.assertEqual(rec["diff"]["files_changed"], 0)
+        self.assertEqual(rec["tokens_total"], 1060)
         self.assertTrue((next((self.tmp / "runs").glob("*/work")) / "node_modules" / "x").exists())
 
     def test_failing_setup_stops_before_the_agent_starts(self):
         self.make_task(["python3", "-c", "import sys; print('boom'); sys.exit(3)"])
-        os.environ["AGENTBENCH_CLAUDE_BIN"] = "/nonexistent/claude"  # would raise if the agent were launched
+        os.environ["AGENTBENCH_CLAUDE_BIN"] = "/nonexistent/claude"
         self.addCleanup(os.environ.pop, "AGENTBENCH_CLAUDE_BIN", None)
         with self.assertRaisesRegex(runner.TaskNotReady, "setup command failed"):
             runner.run("t1", "haiku-5-5@claude-code", self.tmp / "runs", self.tmp / "tasks")

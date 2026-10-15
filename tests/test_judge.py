@@ -80,7 +80,7 @@ class PacketTest(JudgeBase):
             blob = json.dumps(pk)
             self.assertIn("total(None) crashes", pk["prompt"])
             self.assertIn("prices or []", pk["diff"])
-            self.assertNotIn("none_means_no_prices", blob)  # the hidden test the runner copied into work/
+            self.assertNotIn("none_means_no_prices", blob)
             self.assertNotIn("tests_hidden", blob)
             for secret in ("haiku", "sonnet", "claude-code", str(self.tmp)):
                 self.assertNotIn(secret, blob.lower() if secret.islower() else blob)
@@ -149,7 +149,7 @@ class StubAndCommandTest(JudgeBase):
 
     def test_agreement_between_two_seeds(self):
         script = self.tmp / "j.py"
-        script.write_text(COMMAND)  # scores 3 on even seeds, 4 on odd ones
+        script.write_text(COMMAND)
         code, out, _ = self.judge("--judge", f"{sys.executable} {script}", "--agree", "2")
         self.assertEqual(code, 0, out)
         rep = json.loads((self.runs / "judge-agreement.json").read_text())

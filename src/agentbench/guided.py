@@ -57,7 +57,7 @@ def friendly(e, debug=False):
     return None
 
 
-# ---- the results table ---------------------------------------------------------------------------------------
+
 
 def table(runs):
     """A plain-text table, one row per contestant: result, time, tokens and dollar-equivalent. Peeked runs are left out."""
@@ -68,7 +68,7 @@ def table(runs):
     for r in sorted(kept, key=lambda r: r["started"]):
         by.setdefault(r["contestant"], []).append(r)
     rows = [("Contestant", "Result", "Time", "Tokens", "$ equiv")]
-    for cid, rs in sorted(by.items(), key=lambda kv: (-sum(r["passed"] for r in kv[1]) / len(kv[1]), kv[0])):  # best first
+    for cid, rs in sorted(by.items(), key=lambda kv: (-sum(r["passed"] for r in kv[1]) / len(kv[1]), kv[0])):
         ok = sum(1 for r in rs if r["passed"])
         capped = sum(1 for r in rs if r["status"] == "capped")
         result = ("pass" if ok else "FAIL") if len(rs) == 1 else f"{ok}/{len(rs)} pass"
@@ -102,7 +102,7 @@ def say_results(runs, html_path, say):
     say(f"Full report: {html_path}")
 
 
-# ---- questions -----------------------------------------------------------------------------------------------
+
 
 def yes_no(question, assume_yes, ask, say, interactive):
     """True to go ahead. Without --yes and without a terminal the answer is no, with the flag that would make it yes."""
@@ -128,7 +128,7 @@ def need(value, flag, interactive, prompt, ask, default=None):
     return ask(f"{prompt}{suffix} ").strip() or default or ""
 
 
-# ---- demo ----------------------------------------------------------------------------------------------------
+
 
 def user_contestants():
     """(defs, prices) from ~/.agentbench/contestants.toml if it exists, else the built-in table."""
@@ -203,7 +203,7 @@ def demo(real=False, html="results.html", yes=False, ask=input, say=print, inter
     return code
 
 
-# ---- start ---------------------------------------------------------------------------------------------------
+
 
 def suggest_commits(repo, limit=5):
     """Recent commits that fix something with a test: they touch a test file and a non-test file. [(sha, subject)]."""

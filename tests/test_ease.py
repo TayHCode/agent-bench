@@ -71,7 +71,7 @@ class Env(unittest.TestCase):
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
             try:
                 code = cli.main(list(argv))
-            except SystemExit as e:  # argparse and "error: ..." exits
+            except SystemExit as e:
                 code = e.code
                 if isinstance(code, str):
                     print(code, file=err)
@@ -272,7 +272,7 @@ class GatingTest(Env):
         code, folder = guided.fromcommit.build(repo, sha, "good", self.tmp / "tasks", check=UNITTEST, out=lambda *_: None)
         self.assertEqual(code, 0)
         self.assertIsNone(cli.task_problem("good", str(self.tmp / "tasks")))
-        (folder / "gold" / "cart.py").write_text("raise SystemExit(1)\n")  # the "known fix" no longer fixes anything
+        (folder / "gold" / "cart.py").write_text("raise SystemExit(1)\n")
         self.assertIn("known fix", cli.task_problem("good", str(self.tmp / "tasks")))
 
     def test_matrix_command_accepts_repeats_and_free_stubs(self):
@@ -314,7 +314,7 @@ class StartTest(Env):
 
         code = guided.start(self.args(yes=False), ask=ask, say=out.append, interactive=True)
         self.assertEqual(code, 0, out)
-        self.assertEqual(len(asked), 4)  # repo, commit, agents, then the yes/no
+        self.assertEqual(len(asked), 4)
         self.assertIn("1/3", asked[0])
         self.assertIn("2/3", asked[1])
         self.assertIn("3/3", asked[2])
@@ -362,7 +362,7 @@ class StartTest(Env):
         code, out, err = self.run_cli("start", "--repo", str(repo), "--commit", sha, "--agents", "haiku-5-5@claude-code", "--check", UNITTEST,
                                       "--yes", "--no-open")
         self.assertEqual((code, err), (0, ""), out)
-        self.assertRegex(out, r"haiku-5-5@claude-code\s+FAIL")  # the fake CLI changes nothing
+        self.assertRegex(out, r"haiku-5-5@claude-code\s+FAIL")
         self.assertIn("claude: 9.9.9", out.replace("claude 9.9.9", "claude: 9.9.9"))
 
     def test_the_commit_that_is_not_a_fix_is_rejected_with_a_fix_line(self):

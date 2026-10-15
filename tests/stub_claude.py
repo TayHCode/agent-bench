@@ -25,7 +25,7 @@ cfg = {}
 if os.path.exists(__file__ + ".json"):
     with open(__file__ + ".json") as f:
         cfg = json.load(f)
-sys.stdin.read()  # the prompt
+sys.stdin.read()
 emit({"type": "system", "subtype": "init"})
 for noise in cfg.get("json_noise", []):
     emit(noise)

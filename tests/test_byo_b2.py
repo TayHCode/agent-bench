@@ -100,7 +100,7 @@ class ContestantsFileTest(Scratch):
         creds_before = (home / ".claude" / ".credentials.json").read_text()
         runner.install_config_files(defs["strong"]["files"], clean)
         self.assertEqual((clean / ".claude" / "CLAUDE.md").read_text(), "Always say PINEAPPLE.\n")
-        self.assertEqual({p.name for p in (clean / ".claude").iterdir()}, {"CLAUDE.md", ".credentials.json"})  # nothing else copied
+        self.assertEqual({p.name for p in (clean / ".claude").iterdir()}, {"CLAUDE.md", ".credentials.json"})
         self.assertEqual((home / ".claude" / ".credentials.json").read_text(), creds_before)
 
     def test_a_user_contestant_runs_end_to_end_under_the_byo_profile(self):
@@ -129,8 +129,8 @@ class PlanTest(unittest.TestCase):
     def test_runs_expected_and_worst_case(self):
         p = plan.make_plan(["a", "b", "c"], ["haiku-5-5@claude-code", "sonnet-5-5@claude-code"], None, self.prices(), "byo", 1, 5.0)
         self.assertEqual(p["runs"], 6)
-        self.assertAlmostEqual(p["worst"], 6.0)  # 6 runs x $1 cap
-        self.assertAlmostEqual(p["ceiling"], 5.0)  # the ledger cap bounds the spend
+        self.assertAlmostEqual(p["worst"], 6.0)
+        self.assertAlmostEqual(p["ceiling"], 5.0)
         haiku = plan.expected_each("haiku-5-5@claude-code", runner.CONTESTANTS["haiku-5-5@claude-code"], self.prices(), [])[0]
         sonnet = plan.expected_each("sonnet-5-5@claude-code", runner.CONTESTANTS["sonnet-5-5@claude-code"], self.prices(), [])[0]
         self.assertAlmostEqual(haiku, 0.0058, places=4)
@@ -148,7 +148,7 @@ class PlanTest(unittest.TestCase):
         high = {"ceiling": 3.0}
         said = []
         self.assertTrue(plan.confirm(low, out=said.append))
-        self.assertFalse(plan.confirm(high, stdin=io.StringIO("y\n"), out=said.append))  # not a terminal: no
+        self.assertFalse(plan.confirm(high, stdin=io.StringIO("y\n"), out=said.append))
         self.assertTrue(plan.confirm(high, yes=True, out=said.append))
 
         class Tty(io.StringIO):
@@ -156,7 +156,7 @@ class PlanTest(unittest.TestCase):
                 return True
         self.assertTrue(plan.confirm(high, stdin=Tty("y\n"), out=said.append))
         self.assertFalse(plan.confirm(high, stdin=Tty("n\n"), out=said.append))
-        self.assertFalse(plan.confirm(high, stdin=Tty("\n"), out=said.append))  # enter alone is no
+        self.assertFalse(plan.confirm(high, stdin=Tty("\n"), out=said.append))
 
     def test_unpriced_model_is_named(self):
         defs = {"m": {"cli": "codex", "model": "zz", "price_model": "zz", "effort": "medium", "caps": {}}}
@@ -196,7 +196,7 @@ class MatrixCliTest(Scratch):
             yes = cli.main(["plan", "--ledger-cap", "5", "--yes"])
         finally:
             sys.stdout = old
-        self.assertEqual((code, yes), (3, 0))  # stdin is not a terminal under test
+        self.assertEqual((code, yes), (3, 0))
 
     def test_matrix_runs_tasks_by_contestants_by_repeats_and_uses_user_defs(self):
         calls = []
@@ -225,7 +225,7 @@ class CheckFilesTest(Scratch):
 
     def test_csv_keyed_rows_and_the_max_wrong_boundary(self):
         exp = "id,amount\n1,10\n2,20\n3,30\n4,40\n"
-        a, e = self.files("id,amount\n4,40\n3,31\n2,20.0\n1,99\n", exp)  # reordered; 2 rows wrong
+        a, e = self.files("id,amount\n4,40\n3,31\n2,20.0\n1,99\n", exp)
         self.assertEqual(checkfiles.compare(a, e, key=("id"))[:2], (2, 4))
         self.assertEqual(checkfiles.main(a, e, key=("id"), max_wrong=2), 0)
         self.assertEqual(checkfiles.main(a, e, key=("id"), max_wrong=1), 1)
@@ -234,7 +234,7 @@ class CheckFilesTest(Scratch):
         exp = "id,v\n1,a\n2,b\n"
         a, e = self.files("id,v\n1,a\n3,c\n3,c\n", exp)
         wrong, total, notes = checkfiles.compare(a, e, key=("id"))
-        self.assertEqual((wrong, total), (3, 2))  # row 2 missing, row 3 extra, row 3 duplicated
+        self.assertEqual((wrong, total), (3, 2))
         self.assertTrue(any("missing" in n for n in notes))
 
     def test_csv_without_key_compares_by_position_and_numbers_as_numbers(self):
@@ -268,7 +268,7 @@ class CheckFilesTest(Scratch):
         r = subprocess.run([sys.executable, "-m", "agentbench.cli", "check-files", a, e, "--key", "id"], capture_output=True, text=True,
                            env=os.environ | {"PYTHONPATH": str(SRC)})
         self.assertEqual(r.returncode, 0, r.stdout)
-        # a task whose check is `agentbench check-files ...` finds this install without agentbench on PATH
+
         root = self.tmp / "tasks" / "d1"
         (root / "repo").mkdir(parents=True)
         (root / "repo" / "in.txt").write_text("x\n")
@@ -279,7 +279,7 @@ class CheckFilesTest(Scratch):
         task = tasks.load_task("d1", self.tmp / "tasks")
         work = self.tmp / "w"
         tasks.prepare_workdir(task, work)
-        self.assertFalse(tasks.run_check(task, work)[0])  # no clean.csv yet
+        self.assertFalse(tasks.run_check(task, work)[0])
         (work / "clean.csv").write_text("id,v\n1,a\n")
         self.assertTrue(tasks.run_check(task, work)[0])
 
@@ -326,7 +326,7 @@ class PeekTest(Scratch):
     def test_no_false_positives_for_ordinary_work(self):
         self.assertEqual(self.scan(tool_use("python3 -m unittest discover -s tests_hidden"), tool_use("cat though.txt"), tool_use("git log --oneline"),
                                    tool_use("git show abc1234")), [])
-        # reading about the URL in a file is a tool *result*, not something the agent did
+
         result = json.dumps({"type": "user", "message": {"content": [{"type": "tool_result", "content": "homepage: github.com/acme/secret-app gh pr hidden/"}]}})
         text = json.dumps({"type": "assistant", "message": {"id": "2", "content": [{"type": "text", "text": "see gh pr and hidden/ and gold/"}]}})
         self.assertEqual(self.scan(result, text), [])
@@ -362,7 +362,7 @@ class PeekTest(Scratch):
         self.assertEqual(report.standings(report.split_peeked(report.load_runs(self.tmp / "runs"))[0])[0]["contestant"], "sonnet-5-5@claude-code")
         self.assertEqual(len(report.standings(report.split_peeked(report.load_runs(self.tmp / "runs"))[0])), 1)
         html = report.display_html(report.load_runs(self.tmp / "runs"), self.tmp / "tasks")
-        self.assertTrue("Peeked runs" in html and "runner has no telemetry or uploads" in html)  # the bring-your-own methodology, not the pilot text
+        self.assertTrue("Peeked runs" in html and "runner has no telemetry or uploads" in html)
         self.assertNotIn("owner", html)
 
 
@@ -379,9 +379,9 @@ class TooEasyTest(unittest.TestCase):
         self.assertEqual(report.too_easy_tasks(easy), ["t"])
         self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "b", passed=False)]), [])
         self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "b", status="capped")]), [])
-        self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "b", wall=300)]), [])  # median 165 s
+        self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "b", wall=300)]), [])
         self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "b", fresh=90_000)]), [])
-        self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "a")]), [])  # one contestant cannot be separated from itself
+        self.assertEqual(report.too_easy_tasks([synth("t", "a"), synth("t", "a")]), [])
         self.assertEqual(report.too_easy_tasks(easy + [synth("u", "a"), synth("u", "b", passed=False)]), ["t"])
 
     def test_report_says_so(self):
@@ -397,7 +397,7 @@ class NoNetworkTest(Scratch):
     def test_no_module_of_agentbench_imports_anything_that_talks_to_a_network(self):
         for path in (SRC / "agentbench").glob("*.py"):
             if path.name == "judge_gemini.py":
-                continue  # the optional judge backend: used only with --judge gemini
+                continue
             for node in ast.walk(ast.parse(path.read_text())):
                 names = [a.name for a in node.names] if isinstance(node, ast.Import) else [node.module or ""] if isinstance(node, ast.ImportFrom) else []
                 for n in names:
@@ -459,7 +459,7 @@ class AuditRunnerRegressionTest(Scratch):
                 args += ["--contestant", "mine"] if command == "run" else ["--contestants", "mine", "--ledger-cap", "1"]
                 with self.subTest(profile=profile, command=command), redirect_stdout(output), redirect_stderr(output):
                     self.assertEqual(cli.main(args), 0, output.getvalue())
-        # The auditor's default 'run' case must also work without --profile.
+
         with redirect_stdout(io.StringIO()):
             self.assertEqual(cli.main(["run", "--task", "median-bug", "--contestant", "mine", "--contestants-file", str(path),
                                        "--tasks-dir", str(fixture), "--out", str(self.tmp / "default")]), 0)

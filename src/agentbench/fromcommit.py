@@ -270,7 +270,7 @@ def build(repo, fix, task_id, tasks_dir, base=None, check=None, setup=None, allo
         if not keep_failed:
             shutil.rmtree(build_dir, ignore_errors=True)
         raise
-    # verify in place under the temporary name (load_task wants the final folder name)
+
     task = tomllib.loads((build_dir / "task.toml").read_text()) | {"root": build_dir}
     task["prompt_text"] = prompt
     out(f"verifying (setup once per copy, then the check twice on the unfixed and twice on the fixed tree) ...")

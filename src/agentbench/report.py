@@ -134,7 +134,7 @@ def display(runs):
     return "\n".join(rows) + "\n"
 
 
-# ---- aggregation -------------------------------------------------------------------------------------------
+
 
 def quality(rs):
     """Mean judge score (1-5) over the runs a judge scored, else None. Secondary: never used for ranking or pass/fail."""
@@ -253,7 +253,7 @@ def spread_notes(runs):
     return notes
 
 
-# ---- failures and comparison with the real fix --------------------------------------------------------------
+
 
 def _fail_line(tail):
     """The most telling line of the (truncated) check output, taken by fixed rules."""
@@ -324,7 +324,7 @@ def task_info(task_id, tasks_dir=None):
             "manifest": manifest, "gold": gold, "root": root}
 
 
-# ---- peeked runs and "too easy" tasks -------------------------------------------------------------------------
+
 
 def split_peeked(runs):
     """(runs that count, runs flagged `peeked`). A peeked run looked for the answer; it is listed but left out of every table."""
@@ -363,7 +363,7 @@ def peeked_section_md(peeked):
     return rows + [""]
 
 
-# ---- markdown ----------------------------------------------------------------------------------------------
+
 
 def _money(x):
     return "n/a" if x is None else f"${x:.2f}" if x >= 0.1 else f"${x:.3f}"
@@ -440,7 +440,7 @@ def display_markdown(runs, tasks_dir=None):
     return "\n".join(out)
 
 
-# ---- html --------------------------------------------------------------------------------------------------
+
 
 CSS = """
 :root{color-scheme:light dark;--bg:#fcfcfb;--card:#f4f3f0;--fg:#0b0b0b;--muted:#52514e;--line:#e2e1dc;--success:#2a78d6;--fail:#eb6834;--bar:#2a78d6;--ring:#fcfcfb}
@@ -514,7 +514,7 @@ def _conclusion_html(conclusion):
         heading = re.fullmatch(r"(#{1,6})\s+(.+)", line)
         if heading:
             flush()
-            level = min(len(heading[1]) + 1, 6)  # nested below the Conclusion heading
+            level = min(len(heading[1]) + 1, 6)
             parts.append(f"<h{level}>{escape(heading[2])}</h{level}>")
         else:
             head = cells(line)

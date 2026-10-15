@@ -15,7 +15,7 @@ from pathlib import Path
 from .cost import load_prices, usd
 
 
-FRESH = ("input", "cache_write", "cache_write_5m", "output")  # everything except cache reads
+FRESH = ("input", "cache_write", "cache_write_5m", "output")
 
 
 def with_price_model(prices, model, price_model):
@@ -182,12 +182,12 @@ class CodexMeter:
 
     def __init__(self, prices=None, model=None):
         self.prices, self.model = prices, model
-        self.total = None  # latest cumulative total_token_usage
+        self.total = None
         self.efforts, self.models = set(), set()
         self.events, self.final = 0, None
         self._offsets = {}
 
-    def feed(self, event):  # stdout JSONL
+    def feed(self, event):
         if not isinstance(event, dict):
             return
         self.events += 1

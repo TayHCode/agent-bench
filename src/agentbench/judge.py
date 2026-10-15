@@ -54,7 +54,7 @@ class Skip(Exception):
     """A run that cannot be judged (no checkout, no diff, task not found)."""
 
 
-# ---- packet ------------------------------------------------------------------------------------------------
+
 
 def _git(work, *args):
     r = subprocess.run(["git", "-C", str(work), "-c", "core.pager=cat", *args], capture_output=True, text=True, errors="replace")
@@ -90,7 +90,7 @@ def scrub(text, run):
 
 def render_prompt(task_prompt, diff, seed):
     items = list(RUBRIC)
-    random.Random(seed).shuffle(items)  # rubric order varies with the seed, so a second assessment provides another opinion
+    random.Random(seed).shuffle(items)
     rubric = "\n".join(f"- {k}: {RUBRIC[k]}" for k in items)
     return (
         "You are reviewing one change that an anonymous coding agent made to a repository. Judge only the quality of the change. "
@@ -112,7 +112,7 @@ def build_packet(run_dir, run, blind_id, seed, tasks_dir, max_chars):
             "answer_format": {"scores": {k: "1-5" for k in RUBRIC}, "reason": "one line"}}
 
 
-# ---- verdict -----------------------------------------------------------------------------------------------
+
 
 def parse_verdict(text):
     """First JSON object in the text -> (scores {key: int 1-5}, one-line reason). Raises JudgeError."""
@@ -132,7 +132,7 @@ def parse_verdict(text):
     return scores, " ".join(str(d.get("reason", "")).split())[:300]
 
 
-# ---- backends: each takes (packet) and returns {"text", "tokens_in", "tokens_out", "cost_usd"} -------------------
+
 
 class Stub:
     """Deterministic, free, for tests: scores come from a hash of the diff (and the seed when noisy)."""
@@ -217,10 +217,10 @@ def make_backend(spec, cfg):
         if not cfg.get("command", {}).get("cmd"):
             raise SystemExit("error: [command] cmd is missing in judge.toml")
         return Command(cfg["command"], cfg["command"]["cmd"])
-    return Command(cfg.get("command", {}), spec)  # anything else is itself the command
+    return Command(cfg.get("command", {}), spec)
 
 
-# ---- running -----------------------------------------------------------------------------------------------
+
 
 def finished_runs(dirs):
     """[(run_dir, run.json)] for every non-peeked run record under the directories."""

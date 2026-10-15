@@ -19,7 +19,7 @@ def emit(event):
 
 
 def main():
-    sys.stdin.read()  # the prompt
+    sys.stdin.read()
     emit({"type": "system", "subtype": "init"})
     fix = os.environ.get("AGENTBENCH_STUB_FIX")
     if fix:

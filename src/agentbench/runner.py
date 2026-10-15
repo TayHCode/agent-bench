@@ -145,14 +145,14 @@ def claude_command(c, max_usd):
         t = c["team"]
         cmd += ["--agents", json.dumps({"worker": WORKER | {"model": t["worker_model"]}}),
                 "--append-system-prompt", LEAD.format(lo=t["lo"], hi=t["hi"])]
-    return cmd  # the prompt goes in on stdin
+    return cmd
 
 
 def codex_command(c, workdir):
     return [codex_bin(), "exec", "--json", "-m", c["model"], "-c", f"model_reasoning_effort={c['effort']}",
             "-s", "workspace-write", "-c", "sandbox_workspace_write.network_access=true",
             "--add-dir", str(CACHE), "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check",
-            "-C", str(workdir), "-"]  # the prompt goes in on stdin
+            "-C", str(workdir), "-"]
 
 
 def kill_tree(proc, windows=os.name == "nt"):
@@ -210,7 +210,7 @@ def supervise(proc, meter, tail_root, caps, prompt, transcript_path):
     proc.wait()
     stop.set()
     watcher.join(timeout=5)
-    meter.tail(tail_root)  # pick up whatever was written after the last poll
+    meter.tail(tail_root)
     # A fast CLI can exit before the watcher checks usage or a short deadline.
     why = meter.breach(caps["max_tokens"], caps["max_usd"], caps.get("max_fresh_tokens"))
     if not why and time.monotonic() > deadline:
@@ -293,7 +293,7 @@ def run(task_id, contestant_id, out_dir="runs", tasks_dir=None, caps=None, profi
             env["ANTHROPIC_API_KEY"] = os.environ["ANTHROPIC_API_KEY"]
         cmd, meter, tail_root = claude_command(c, caps["max_usd"]), Meter(prices), home / ".claude" / "projects"
 
-    ok, setup_out, _ = run_setup(task, workdir, env)  # installs happen before the clock and the meter start
+    ok, setup_out, _ = run_setup(task, workdir, env)
     if not ok:
         shutil.rmtree(run_dir, ignore_errors=True)
         raise TaskNotReady(f"the task's setup command failed:\n{setup_out}")

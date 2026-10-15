@@ -110,7 +110,7 @@ class DataPrepareTest(unittest.TestCase):
         result = tasks.verify_task(tasks.load_task(built.name, built.parent), self.root / 'verify', repeats=2)
         self.assertTrue(result['start_fails'] and result['gold_passes'])
         self.assertFalse(result['flaky'])
-        # A ready user task wins over the shipped recipe on subsequent commands.
+
         with patch.object(tasks, 'DEFAULT_TASKS', self.template.parent), patch.object(tasks, 'user_tasks_dir', return_value=built.parent):
             self.assertEqual(tasks.find_task_root(built.name), built)
 

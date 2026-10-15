@@ -78,7 +78,7 @@ class MeterTest(unittest.TestCase):
             "cache_creation": {"ephemeral_5m_input_tokens": 100, "ephemeral_1h_input_tokens": 0}}}, "perTurnEffort": "medium"}
         m = Meter(cost.load_prices())
         f = sub / "agent-1.jsonl"
-        f.write_text(json.dumps(line) + "\n" + json.dumps(line)[:20])  # second line is still being written
+        f.write_text(json.dumps(line) + "\n" + json.dumps(line)[:20])
         m.tail(root)
         self.assertEqual(m.tokens, 106)
         self.assertEqual(m.by_model()["claude-haiku-5-5"]["cache_write_5m"], 100)
@@ -209,8 +209,8 @@ class FreshCapTest(unittest.TestCase):
         m.feed({"type": "assistant", "message": {"id": "a", "model": "claude-haiku-5-5", "usage": {
             "input_tokens": 5, "cache_creation_input_tokens": 100, "cache_read_input_tokens": 900_000, "output_tokens": 10}}})
         self.assertEqual((m.tokens, m.fresh), (900_115, 115))
-        self.assertIsNone(m.breach(None, None, 300_000))  # no total cap; 115 fresh is far below 300k
-        self.assertIn("tokens 900115 > 400000", m.breach(400_000, None))  # the old total cap would have killed it
+        self.assertIsNone(m.breach(None, None, 300_000))
+        self.assertIn("tokens 900115 > 400000", m.breach(400_000, None))
         self.assertIn("fresh tokens 115 > 100", m.breach(None, None, 100))
 
     def test_codex_fresh_is_uncached_input_plus_output(self):
@@ -228,7 +228,7 @@ class FreshCapTest(unittest.TestCase):
         for cid, usd in want.items():
             c = runner.profile_caps(cid, "m4")
             self.assertEqual((c["max_fresh_tokens"], c["max_minutes"], c["max_usd"], c["max_tokens"]), (1_000_000, 20, usd, None), cid)
-            self.assertGreaterEqual(usd, 2 * m3_dearest[cid], cid)  # at least 2x the dearest M3 run of that contestant
+            self.assertGreaterEqual(usd, 2 * m3_dearest[cid], cid)
         self.assertIsNone(runner.profile_caps("opus-5-5@claude-code", "m3")["max_fresh_tokens"])
 
     def test_run_with_900k_cache_reads_is_not_capped_under_m4_but_is_under_m3(self):
@@ -256,10 +256,10 @@ class FreshCapTest(unittest.TestCase):
     def test_minute_cap_still_kills_a_quiet_run(self):
         import time
         t0 = time.monotonic()
-        r = self.go("slow", max_minutes=0.02)  # 1.2 s
+        r = self.go("slow", max_minutes=0.02)
         self.assertEqual(r["status"], "capped")
         self.assertTrue(r["cap_reason"].startswith("minutes "), r["cap_reason"])
-        self.assertLess(time.monotonic() - t0, 30)  # the fake sleeps 60 s; it was killed, not awaited
+        self.assertLess(time.monotonic() - t0, 30)
 
 
 class VerifyAndMatrixTest(unittest.TestCase):
@@ -307,7 +307,7 @@ class VerifyAndMatrixTest(unittest.TestCase):
                 self.assertIs(m["fix_after_2026_06_30"], True)
                 self.assertTrue(all(m["workflow_match"].values()))
                 task = tomllib.loads((task_dir / "task.toml").read_text())
-                self.assertTrue(any(part.startswith("tests_hidden") for part in task["check"]), task["check"])  # runs the hidden folder
+                self.assertTrue(any(part.startswith("tests_hidden") for part in task["check"]), task["check"])
 
     def test_no_task_file_is_hidden_from_git_by_an_ignore_rule(self):
         # An upstream .gitignore inside repo/ once hid a needed file (humanize _version.py), and a typeshed stub folder
@@ -344,8 +344,8 @@ class VerifyAndMatrixTest(unittest.TestCase):
             return rec
 
         code = cli.run_matrix("median-bug", "opus-5-5@claude-code,astra-6@codex,sol-6.1@codex", out, None, 1.0, fake_run)
-        self.assertEqual(code, 2)  # 0.95 spent of 1.0 -> stop before the second contestant
-        self.assertEqual(seen, [("sol-6.1@codex", 0.30)])  # cheapest first, whatever order the list gave
+        self.assertEqual(code, 2)
+        self.assertEqual(seen, [("sol-6.1@codex", 0.30)])
 
 
     def test_m3_profile_raises_token_minute_and_dollar_caps(self):
@@ -353,7 +353,7 @@ class VerifyAndMatrixTest(unittest.TestCase):
         m3 = runner.profile_caps("opus-5-5@claude-code", "m3")
         self.assertEqual((m2["max_tokens"], m2["max_minutes"], m2["max_usd"]), (150_000, 10, 0.75))
         self.assertEqual((m3["max_tokens"], m3["max_minutes"], m3["max_usd"]), (400_000, 20, 1.5))
-        for cid in runner.CONTESTANTS:  # every contestant has an m3 dollar cap, and none is lower than its m2 one
+        for cid in runner.CONTESTANTS:
             self.assertGreaterEqual(runner.profile_caps(cid, "m3")["max_usd"], runner.profile_caps(cid)["max_usd"])
 
 
@@ -407,10 +407,10 @@ class VerifyAndMatrixTest(unittest.TestCase):
         import csv
         task, work = self._donee_workdir()
         rows = list(csv.reader(open(work / "matched.csv", newline="", encoding="utf-8")))
-        no_status = [r[:8] + ["N", ""] if i else r for i, r in enumerate(rows)]  # everything "not revoked"
+        no_status = [r[:8] + ["N", ""] if i else r for i, r in enumerate(rows)]
         guess = [list(r) for r in rows]
         for r in guess[1:]:
-            if r[4] == "many":  # told not to guess: a wrong EIN here counts
+            if r[4] == "many":
                 r[3], r[4] = "00-0000000", "one"
         for name, data in (("no status", no_status), ("guessing", guess)):
             with open(work / "matched.csv", "w", newline="", encoding="utf-8") as f:
@@ -451,7 +451,7 @@ class ReportTest(unittest.TestCase):
                       "caps": {"max_usd": 0.7}}
         out = report.display([run, team])
         self.assertIn("| median-bug | opus-5-5@claude-code | m2: no token cap, $0.75 | pass | 41 | 12,345 |  | $0.0123 |  | medium (medium) | finished |", out)
-        # two contestants on the same model are told apart, and a team shows how many workers ran
+
         self.assertIn("| opus+haiku-swarm@claude-code | m2: no token cap, $0.7 | capped | 41 | 12,345 |  | $0.0123 | 11 | medium (medium) | capped: tokens 9 > 5 |", out)
         self.assertEqual(report.display([]), "No runs found.\n")
 
@@ -502,7 +502,7 @@ class ReportPageTest(unittest.TestCase):
         self.assertEqual(order, ["haiku-5-5@claude-code", "opus-5-5@claude-code", "opus+haiku-swarm@claude-code"])
         opus = report.standings(self.runs)[1]
         self.assertEqual((opus["passed"], opus["runs"]), (1, 2))
-        self.assertAlmostEqual(opus["per_solved"], 0.7)  # failed spend is charged to the solved run
+        self.assertAlmostEqual(opus["per_solved"], 0.7)
         self.assertIsNone(report.standings(self.runs)[2]["per_solved"])
 
     def test_spread_notes_flag_flips_and_cost_swings(self):
@@ -536,7 +536,7 @@ class ReportPageTest(unittest.TestCase):
         self.assertEqual(report.compare_to_gold(run, gold)["mine"], 8)
         info = report.task_info("taskiq-lazy-logging")
         self.assertIn("taskiq/acks.py", info["manifest"]["gold_comparison"]["ignore"])
-        self.assertEqual(info["gold"], [])  # fetched by the pinned recipe, not vendored
+        self.assertEqual(info["gold"], [])
 
     def test_docs_changelogs_and_data_driven_test_cases_are_not_source_lines(self):
         for path in ("docs/quickstart.rst", "CHANGES.rst", "changelog/5093.bugfix.rst"):
@@ -638,7 +638,7 @@ class ReportPageTest(unittest.TestCase):
         saved = json.loads((d / "run.json").read_text())
         self.assertEqual(saved["workers"], 2)
         self.assertEqual([f["path"] for f in saved["diff"]["files"]], ["stats.py"])
-        self.assertEqual(backfill(runs), 0)  # idempotent
+        self.assertEqual(backfill(runs), 0)
 
 
 if __name__ == "__main__":

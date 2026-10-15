@@ -186,7 +186,7 @@ def gold_diff(task):
 def apply_gold(task, workdir):
     """Overlay the real upstream fix (task gold/ files) onto a working copy."""
     shutil.copytree(task["root"] / "gold", workdir, dirs_exist_ok=True)
-    for rel in task.get("gold_delete", []):  # files the real fix removed
+    for rel in task.get("gold_delete", []):
         (Path(workdir) / rel).unlink(missing_ok=True)
 
 
